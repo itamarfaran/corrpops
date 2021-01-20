@@ -1,0 +1,23 @@
+Package: corrfuncs
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Itamar",
+           family = "Faran",
+           role = c("aut", "cre"),
+           email = "itamar.faran@gmail.com")
+Description: What the package does (one paragraph).
+License: use_mit_license
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Imports:
+  mvtnorm,
+  numDeriv,
+  matrixcalc,
+  Rcpp (>= 1.0.4)
+Suggests:
+  Matrix,
+  parallel
+LinkingTo: Rcpp
