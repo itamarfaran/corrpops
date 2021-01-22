@@ -3,10 +3,9 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-NumericMatrix corrcalc_c(NumericMatrix matr,
-                        int p, int m,
-                        NumericVector order_vecti,
-                        NumericVector order_vectj)
+NumericMatrix corrcalc_c(NumericMatrix matr, int m,
+                         NumericVector order_vecti,
+                         NumericVector order_vectj)
 {
   NumericMatrix out(m, m);
 

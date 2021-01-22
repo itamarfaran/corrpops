@@ -1,5 +1,6 @@
+# todo: beautify
 theta_of_alpha <- function(alpha, healthy_dt, sick_dt, linkFun, d = 1){
-  out <- rbind(linkFun$CLEAN(dt = sick_dt, a = alpha, d = d), healthy_dt)
+  out <- rbind(linkFun$rev_func(dt = sick_dt, a = alpha, d = d), healthy_dt)
   out <- colMeans(out)
   return(out)
 }
@@ -14,11 +15,11 @@ sum_of_squares <- function(
   if(missing(inv_sigma))
     inv_sigma <- solve(sigma)
 
-  g11 <- as.matrix(triangle2vector(linkFun$FUN(t = theta, a = alpha, d = dim_alpha)))
+  g11 <- as.matrix(triangle2vector(linkFun$func(t = theta, a = alpha, d = dim_alpha)))
   sse <- nrow(sick_dt) * t(g11) %*% inv_sigma %*% ( 0.5 * g11 - colMeans(sick_dt) )
 
   if(reg_lambda > 0)
-    sse <- sse + reg_lambda*sum((alpha - linkFun$NULL_VAL)^reg_p)
+    sse <- sse + reg_lambda*sum((alpha - linkFun$null_value)^reg_p)
   return(sse)
 }
 
@@ -43,10 +44,10 @@ inner_optim_loop <- function(
 
   # if(is.null(theta0)) theta0 <- colMeans(healthy_dt)
   if(is.null(theta0)) theta0 <- colMeans(rbind(healthy_dt, sick_dt))
-  if(is.null(alpha0)) alpha0 <- matrix(linkFun$NULL_VAL, nr = p, nc = dim_alpha)
+  if(is.null(alpha0)) alpha0 <- matrix(linkFun$null_value, nr = p, nc = dim_alpha)
 
   if(!is.positive.semi.definite(vector2triangle(theta0, diag_value = 1))
-     || !is.positive.semi.definite(linkFun$FUN(t = theta0, a = alpha0, d = dim_alpha)))
+     || !is.positive.semi.definite(linkFun$func(t = theta0, a = alpha0, d = dim_alpha)))
     warning("Initial parameters dont result with positive-definite matrices")
 
   dim_alpha <- length(alpha0)/p

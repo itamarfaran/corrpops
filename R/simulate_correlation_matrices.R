@@ -1,5 +1,4 @@
-create_correlation_matrices <- function(real_corr,
-                                        real_var,
+create_correlation_matrices <- function(Sigma,
                                         sample_size, df = 0,
                                         AR = NULL, MA = NULL,
                                         random_effect = NULL,

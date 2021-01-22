@@ -1,3 +1,4 @@
+# todo: beautify
 estimate_alpha <- function(
   healthy_dt, sick_dt, dim_alpha = 1,
   linkFun = linkFunctions$multiplicative_identity,
@@ -11,8 +12,8 @@ estimate_alpha <- function(
   }
   if(length(verbose) == 1) verbose <- rep(verbose, 2)
 
-  healthy_dt <- convert_corr_array_to_data_matrix_test(healthy_dt)
-  sick_dt <- convert_corr_array_to_data_matrix_test(sick_dt)
+  healthy_dt <- convert_corr_array_to_data_matrix(healthy_dt)
+  sick_dt <- convert_corr_array_to_data_matrix(sick_dt)
 
   alpha0 <- theta0 <- NULL
   if(!raw_start){
@@ -40,7 +41,7 @@ estimate_alpha <- function(
     early_stop = early_stop, verbose = verbose[2]
   )
 
-  if(bias_correction) cov_model$alpha <- cov_model$alpha - median(cov_model$alpha) + linkFun$NULL_VAL
+  if(bias_correction) cov_model$alpha <- cov_model$alpha - median(cov_model$alpha) + linkFun$null_value
 
   return(cov_model)
 }

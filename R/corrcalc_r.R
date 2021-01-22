@@ -1,4 +1,5 @@
-corrcalc_r <- function(matr, p, m, order_vecti, order_vectj){
+corrcalc_r <- function(matr, m, order_vecti, order_vectj)
+{
   output <- matrix(0, nrow = m, ncol = m)
 
   for(i1 in 1:m){
@@ -22,6 +23,5 @@ corrcalc_r <- function(matr, p, m, order_vecti, order_vectj){
         (matr_ik*matr_jl + matr_il*matr_jk)
     }
   }
-
   return(output)
 }

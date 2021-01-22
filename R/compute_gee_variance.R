@@ -1,52 +1,61 @@
-compute_mu_alpha_jacobian <- function(type, alpha, healthy_dt, sick_dt, d = 1, linkFun){
-  func <- if(type == 'sick'){
-    function(A) triangle2vector(
-      linkFun$FUN(
-        t = theta_of_alpha(A, healthy_dt, sick_dt, linkFun = linkFun, d = d),
-        a = A,
-        d = d
-      )
-    )
-  } else if(type == 'healthy') {
-    function(A) theta_of_alpha(A, healthy_dt, sick_dt, linkFun = linkFun, d = d)
-  }
-  return(
-    jacobian(func = func, x = alpha)
-  )
+compute_mu_alpha_jacobian <- function(group, alpha, healthy_dt, sick_dt, d = 1, linkFun)
+{
+   if(group == 'sick'){
+     func <- function(A){
+       out <- triangle2vector(linkFun$func(
+         t = theta_of_alpha(A, healthy_dt, sick_dt, linkFun = linkFun, d = d),
+         a = A,
+         d = d
+       ))
+       return(out)
+     }
+   } else if(group == 'healthy'){
+     func <- function(A){
+       out <- theta_of_alpha(A, healthy_dt, sick_dt, linkFun = linkFun, d = d)
+       return(out)
+     }
+   }
+  out <- jacobian(func = func, x = alpha)
+  return(out)
 }
 
 
-compute_gee_variance <- function(
-  cov_obj, healthy_dt, sick_dt, est_mu = TRUE,
-  reg_lambda = 0, reg_p = 2){
-
-  create_list_for_raw_gee <- function(type, cov_obj, healthy_dt, sick_dt, est_mu){
-    type <- match.arg(type, c('healthy', 'sick'))
-    healthy_data <- convert_corr_array_to_data_matrix_test(healthy_dt)
-    sick_data <- convert_corr_array_to_data_matrix_test(sick_dt)
-    data <- if(type == 'healthy') healthy_data else sick_data
-
+compute_gee_variance <- function(cov_obj,
+                                 healthy_dt, sick_dt,
+                                 est_mu = TRUE, reg_lambda = 0, reg_p = 2)
+{
+  inner <- function(group){
     p <- 0.5 + sqrt(1 + 8*ncol(data))/2
     d <- length(cov_obj$alpha)/p
 
+    healthy_data <- convert_corr_array_to_data_matrix(healthy_dt)
+    sick_data <- convert_corr_array_to_data_matrix(sick_dt)
+    data <- if(group == 'healthy') healthy_data else sick_data
+
     jacobian <- compute_mu_alpha_jacobian(
-      type = type,
+      group = group,
       alpha = cov_obj$alpha,
       healthy_dt = healthy_data,
       sick_dt = sick_data,
       d = d,
       linkFun = cov_obj$linkFun)
-    expected_value <- if(est_mu){
-      if(type == 'healthy') cov_obj$theta else triangle2vector(
-        cov_obj$linkFun$FUN(
+
+    if(est_mu){
+      if(group == 'healthy'){
+        expected_value <- cov_obj$theta
+      } else {
+        expected_value <- triangle2vector(cov_obj$linkFun$func(
           t = cov_obj$theta,
           a = cov_obj$alpha,
-          d = d
-        )
-      )
-    } else colMeans(data)
-    solve_Sigma <- solve(corrmat_covariance_from_dt(data, est_n = T))
+          d = d))
+      }
+    } else {
+      expected_value <- colMeans(data)
+    }
+
+    solve_sigma <- solve(corrmat_covariance_from_dt(data, est_n = T))
     df <- nrow(data) - 1
+    # or:
     # efrons_effective_sample_size(
     # n = nrow(data),
     # efrons_rms_sample(data)
@@ -56,30 +65,32 @@ compute_gee_variance <- function(
       data = data,
       jacobian = jacobian,
       expected_value = expected_value,
-      solve_Sigma = solve_Sigma,
+      solve_sigma = solve_sigma,
       df = df
     )
     return(out)
   }
 
-  compute_gee_raw <- function(type, list_){
-    if(type == 'I0'){
-      out <- t(list_$jacobian) %*% list_$solve_Sigma %*% list_$jacobian
-    } else if (type == 'I1'){
-      residuals <- list_$data - rep(1, nrow(list_$data)) %o% list_$expected_value
-      cov_mat <- t(residuals) %*% residuals / list_$df
-      out <- t(list_$jacobian) %*% list_$solve_Sigma %*% cov_mat %*% list_$solve_Sigma %*% list_$jacobian
+  compute_gee_raw <- function(group, lst){
+    if(group == 'I0'){
+      out <- t(lst$jacobian) %*% lst$solve_sigma %*% lst$jacobian
+    } else {
+      residuals <- lst$data - rep(1, nrow(lst$data)) %o% lst$expected_value
+      cov_mat <- t(residuals) %*% residuals / lst$df
+      out <- t(lst$jacobian) %*% lst$solve_sigma %*% cov_mat %*% lst$solve_sigma %*% lst$jacobian
     }
-    out <- out*nrow(list_$data)
+    out <- out * nrow(lst$data)
     return(out)
   }
 
-  healthy_list <- create_list_for_raw_gee('healthy', cov_obj, healthy_dt, sick_dt, est_mu)
-  sick_list <- create_list_for_raw_gee('sick', cov_obj, healthy_dt, sick_dt, est_mu)
+  healthy_lst <- inner('healthy')
+  sick_lst <- inner('sick')
 
-  I0 <- compute_gee_raw('I0', healthy_list) + compute_gee_raw('I0', sick_list)
+  I0 <- compute_gee_raw('I0', healthy_lst) + compute_gee_raw('I0', sick_lst)
+
+  I1 <- compute_gee_raw('I1', healthy_lst) + compute_gee_raw('I1', sick_lst)
   solve_I0 <- solve(I0)
-  I1 <- compute_gee_raw('I1', healthy_list) + compute_gee_raw('I1', sick_list)
-  res <- solve_I0 %*% I1 %*% solve_I0
-  return(res)
+
+  out <- solve_I0 %*% I1 %*% solve_I0
+  return(out)
 }

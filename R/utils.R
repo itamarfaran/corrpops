@@ -1,12 +1,12 @@
-remove_zeros <- function(x, val_to_remove = 0, val_to_replace = 1){
-  x[x == val_to_remove] <- val_to_replace
+remove_zeros <- function(x, rem = 0, rep = 1){
+  x[x == rem] <- rep
   return(x)
 }
 
 
-matrix_pow <- function(x, pow){
+matrix_powerer <- function(x, power){
   eig <- eigen(x)
-  out <- eig$vectors %*% diag(eig$values ^ pow) %*% t(eig$vectors)
+  out <- eig$vectors %*% diag(eig$values ^ power) %*% t(eig$vectors)
   return(out)
 }
 
@@ -20,7 +20,8 @@ sqrt_diag <- function(x) return(sqrt(diag(x)))
 force_symmetry <- function(matr) return(0.5 * (t(matr) + matr))
 
 
-vnorm <- function(x, matr, sqrt = FALSE, solve_matr = FALSE){
+vnorm <- function(x, matr, sqrt = FALSE, solve_matr = FALSE)
+{
   if(missing(matr)){
     out <- sum(x^2)
   } else {

@@ -1,3 +1,4 @@
+# todo: beautify
 estimate_alpha_jacknife <- function(
   healthy_dt, sick_dt, dim_alpha = 1,
   alpha0 = NULL, theta0 = NULL,
@@ -31,7 +32,7 @@ estimate_alpha_jacknife <- function(
       early_stop = early_stop, verbose = FALSE
     )
 
-    if(bias_correction) cov_model$alpha <- cov_model$alpha - median(cov_model$alpha) + linkFun$NULL_VAL
+    if(bias_correction) cov_model$alpha <- cov_model$alpha - median(cov_model$alpha) + linkFun$null_value
 
     gee_out <- if(return_gee){
       triangle2vector(
@@ -58,8 +59,8 @@ estimate_alpha_jacknife <- function(
     if(!name %in% names(cov_config)) cov_config[[name]] <- list()
   }
 
-  healthy_dt <- convert_corr_array_to_data_matrix_test(healthy_dt)
-  sick_dt <- convert_corr_array_to_data_matrix_test(sick_dt)
+  healthy_dt <- convert_corr_array_to_data_matrix(healthy_dt)
+  sick_dt <- convert_corr_array_to_data_matrix(sick_dt)
 
   if(is.null(alpha0) | is.null(theta0)){
     ini_model <- estimate_alpha(
