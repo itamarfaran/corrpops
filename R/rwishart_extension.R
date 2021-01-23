@@ -48,12 +48,12 @@ rWishart_ARMA <- function(n = 1, df, Sigma, AR = NULL, MA = NULL, random_effect 
   max_ar <- max_ma <- NULL
 
   if(!is.null(AR)){
-    if(!check_invertability_arma(AR))
+    if(!is_invertable_arma(AR))
       stop('AR process not stationary')
     max_ar <- length(AR)
   }
   if(!is.null(MA)){
-    if(!check_invertability_arma(MA))
+    if(!is_invertable_arma(MA))
       stop('MA process not invertable')
     max_ma <- length(MA)
   }

@@ -1,4 +1,14 @@
-central_moment <- function(x, exkurtosis = TRUE)
+#' Calculate Central Moments
+#'
+#' Calculate the sample Mean, Variance, Skewness and Kurtosis
+#'
+#' @param x numeric vector
+#' @param exkurtosis logical, whther to caculate the ex-kurtosis or kurtosis. default True
+#' @return named numeric vector of length 4
+#'
+#' @export
+#'
+central_moments <- function(x, exkurtosis = TRUE)
 {
   out <- numeric(4)
   names(out) <- c('mean', 'variance', 'skewness', ifelse(exkurtosis, 'kurtosis', 'exkurtosis'))

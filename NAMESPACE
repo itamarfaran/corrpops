@@ -2,3 +2,7 @@
 useDynLib(corrfuncs, .registration=TRUE)
 importFrom(Rcpp, evalCpp)
 
+export(calculate_mean_matrix)
+export(central_moments)
+export(matrix_sum)
+export(vector_sum)
