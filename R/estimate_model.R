@@ -1,5 +1,5 @@
 estimate_model <- function(
-  healthy_dt, sick_dt, dim_alpha = 1,
+  control_dt, diagnosed_dt, dim_alpha = 1,
   LinkFunc = LinkFunctions$multiplicative_identity,
   model_reg_config = list(), matrix_reg_config = list(),
   iid_config = list(), cov_config = list(),
@@ -12,13 +12,13 @@ estimate_model <- function(
   }
   if(length(verbose) == 1) verbose <- rep(verbose, 2)
 
-  healthy_dt <- convert_corr_array_to_data_matrix(healthy_dt)
-  sick_dt <- convert_corr_array_to_data_matrix(sick_dt)
+  control_dt <- convert_corr_array_to_data_matrix(control_dt)
+  diagnosed_dt <- convert_corr_array_to_data_matrix(diagnosed_dt)
 
   alpha0 <- theta0 <- NULL
   if(!raw_start){
     iid_model <- optimiser(
-      healthy_dt = healthy_dt, sick_dt = sick_dt,
+      control_dt = control_dt, diagnosed_dt = diagnosed_dt,
       alpha0 = NULL, theta0 = NULL,
       weight_matrix = NULL, dim_alpha = dim_alpha, LinkFunc = LinkFunc,
       model_reg_config = model_reg_config, matrix_reg_config = matrix_reg_config,
@@ -29,10 +29,10 @@ estimate_model <- function(
     theta0 <- iid_model$theta
   }
 
-  weight_matrix <- corrmat_covariance_from_dt(sick_dt)
+  weight_matrix <- corrmat_covariance_from_dt(diagnosed_dt)
 
   cov_model <- optimiser(
-    healthy_dt = healthy_dt, sick_dt = sick_dt,
+    control_dt = control_dt, diagnosed_dt = diagnosed_dt,
     alpha0 = alpha0, theta0 = theta0,
     weight_matrix = weight_matrix, LinkFunc = LinkFunc,
     model_reg_config = model_reg_config, matrix_reg_config = matrix_reg_config,

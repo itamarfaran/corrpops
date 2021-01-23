@@ -1,17 +1,17 @@
-compute_mu_alpha_jacobian <- function(group, alpha, healthy_dt, sick_dt, d = 1, LinkFunc)
+compute_mu_alpha_jacobian <- function(group, alpha, control_dt, diagnosed_dt, d = 1, LinkFunc)
 {
-   if(group == 'sick'){
+   if(group == 'diagnosed'){
      func <- function(A){
        out <- triangle2vector(LinkFunc$func(
-         t = theta_of_alpha(A, healthy_dt, sick_dt, LinkFunc = LinkFunc, d = d),
+         t = theta_of_alpha(A, control_dt, diagnosed_dt, LinkFunc = LinkFunc, d = d),
          a = A,
          d = d
        ))
        return(out)
      }
-   } else if(group == 'healthy'){
+   } else if(group == 'control'){
      func <- function(A){
-       out <- theta_of_alpha(A, healthy_dt, sick_dt, LinkFunc = LinkFunc, d = d)
+       out <- theta_of_alpha(A, control_dt, diagnosed_dt, LinkFunc = LinkFunc, d = d)
        return(out)
      }
    }
@@ -21,27 +21,27 @@ compute_mu_alpha_jacobian <- function(group, alpha, healthy_dt, sick_dt, d = 1, 
 
 
 compute_gee_variance <- function(cov_obj,
-                                 healthy_dt, sick_dt,
+                                 control_dt, diagnosed_dt,
                                  est_mu = TRUE, reg_lambda = 0, reg_p = 2)
 {
   inner <- function(group){
     p <- 0.5 + sqrt(1 + 8*ncol(data))/2
     d <- length(cov_obj$alpha)/p
 
-    healthy_data <- convert_corr_array_to_data_matrix(healthy_dt)
-    sick_data <- convert_corr_array_to_data_matrix(sick_dt)
-    data <- if(group == 'healthy') healthy_data else sick_data
+    control_data <- convert_corr_array_to_data_matrix(control_dt)
+    diagnosed_data <- convert_corr_array_to_data_matrix(diagnosed_dt)
+    data <- if(group == 'control') control_data else diagnosed_data
 
     jacobian <- compute_mu_alpha_jacobian(
       group = group,
       alpha = cov_obj$alpha,
-      healthy_dt = healthy_data,
-      sick_dt = sick_data,
+      control_dt = control_data,
+      diagnosed_dt = diagnosed_data,
       d = d,
       LinkFunc = cov_obj$LinkFunc)
 
     if(est_mu){
-      if(group == 'healthy'){
+      if(group == 'control'){
         expected_value <- cov_obj$theta
       } else {
         expected_value <- triangle2vector(cov_obj$LinkFunc$func(
@@ -83,12 +83,12 @@ compute_gee_variance <- function(cov_obj,
     return(out)
   }
 
-  healthy_lst <- inner('healthy')
-  sick_lst <- inner('sick')
+  control_lst <- inner('control')
+  diagnosed_lst <- inner('diagnosed')
 
-  I0 <- compute_gee_raw('I0', healthy_lst) + compute_gee_raw('I0', sick_lst)
+  I0 <- compute_gee_raw('I0', control_lst) + compute_gee_raw('I0', diagnosed_lst)
 
-  I1 <- compute_gee_raw('I1', healthy_lst) + compute_gee_raw('I1', sick_lst)
+  I1 <- compute_gee_raw('I1', control_lst) + compute_gee_raw('I1', diagnosed_lst)
   solve_I0 <- solve(I0)
 
   out <- solve_I0 %*% I1 %*% solve_I0

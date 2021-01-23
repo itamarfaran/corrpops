@@ -1,19 +1,19 @@
-theta_of_alpha <- function(alpha, healthy_dt, sick_dt, LinkFunc, d = 1){
-  out <- rbind(LinkFunc$rev_func(dt = sick_dt, a = alpha, d = d), healthy_dt)
+theta_of_alpha <- function(alpha, control_dt, diagnosed_dt, LinkFunc, d = 1){
+  out <- rbind(LinkFunc$rev_func(dt = diagnosed_dt, a = alpha, d = d), control_dt)
   out <- colMeans(out)
   return(out)
 }
 
 
 sum_of_squares <- function(
-  alpha, theta, sick_dt, inv_sigma, LinkFunc,
+  alpha, theta, diagnosed_dt, inv_sigma, LinkFunc,
   sigma, dim_alpha = 1, reg_lambda = 0, reg_p = 2)
 {
   if(missing(inv_sigma))
     inv_sigma <- solve(sigma)
 
   g11 <- as.matrix(triangle2vector(LinkFunc$func(t = theta, a = alpha, d = dim_alpha)))
-  sse <- nrow(sick_dt) * t(g11) %*% inv_sigma %*% ( 0.5 * g11 - colMeans(sick_dt) )
+  sse <- nrow(diagnosed_dt) * t(g11) %*% inv_sigma %*% ( 0.5 * g11 - colMeans(diagnosed_dt) )
 
   if(reg_lambda > 0)
     sse <- sse + reg_lambda*sum((alpha - LinkFunc$null_value)^reg_p)
@@ -30,7 +30,7 @@ get_update_message <- function(i, start_time, convergence, distance){
 
 
 optimiser <- function(
-  healthy_dt, sick_dt, alpha0, theta0, weight_matrix, dim_alpha, LinkFunc,
+  control_dt, diagnosed_dt, alpha0, theta0, weight_matrix, dim_alpha, LinkFunc,
   model_reg_config, matrix_reg_config, iter_config, optim_config, early_stop, verbose)
 {
 
@@ -42,11 +42,11 @@ optimiser <- function(
   iter_config <- utils::modifyList(list(max_loop = 50, reltol = 1e-06, min_loop = 3), iter_config)
   optim_config <- utils::modifyList(list(method = "BFGS", reltol = 1e-06, log_optim = FALSE), optim_config)
 
-  p <- .5 * (1 + sqrt(1 + 8 * ncol(sick_dt)))
+  p <- .5 * (1 + sqrt(1 + 8 * ncol(diagnosed_dt)))
   m <- .5 * p * (p - 1)
 
   if(is.null(theta0))
-    theta0 <- colMeans(rbind(healthy_dt, sick_dt))
+    theta0 <- colMeans(rbind(control_dt, diagnosed_dt))
   if(is.null(alpha0))
     alpha0 <- matrix(LinkFunc$null_value, nr = p, nc = dim_alpha)
 
@@ -81,7 +81,7 @@ optimiser <- function(
     value = sum_of_squares(
       theta = temp_theta,
       alpha = temp_alpha,
-      sick_dt = sick_dt,
+      diagnosed_dt = diagnosed_dt,
       inv_sigma = weight_matrix_reg_inv,
       LinkFunc = LinkFunc,
       dim_alpha = dim_alpha,
@@ -97,8 +97,8 @@ optimiser <- function(
   for(i in 2:iter_config$max_loop){
     temp_theta <- theta_of_alpha(
       alpha = temp_alpha,
-      healthy_dt = healthy_dt,
-      sick_dt = sick_dt,
+      control_dt = control_dt,
+      diagnosed_dt = diagnosed_dt,
       LinkFunc = LinkFunc,
       d = dim_alpha)
 
@@ -106,7 +106,7 @@ optimiser <- function(
       par = temp_alpha,
       fn = sum_of_squares,
       theta = temp_theta,
-      sick_dt = sick_dt,
+      diagnosed_dt = diagnosed_dt,
       inv_sigma = weight_matrix_reg_inv,
       LinkFunc = LinkFunc,
       dim_alpha = dim_alpha,
