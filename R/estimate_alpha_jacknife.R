@@ -1,18 +1,27 @@
-# todo: beautify
-estimate_alpha_jacknife <- function(
-  healthy_dt, sick_dt, dim_alpha = 1,
-  alpha0 = NULL, theta0 = NULL,
-  linkFun = linkFunctions$multiplicative_identity,
+estimate_model_jacknife <- function(
+  healthy_dt, sick_dt, dim_alpha = 1, alpha0 = NULL, theta0 = NULL,
+  LinkFunc = LinkFunctions$multiplicative_identity,
   model_reg_config = list(), matrix_reg_config = list(),
   iid_config = list(iter_config = list(min_loop = 0)), cov_config = list(),
   return_gee = FALSE, jack_healthy = TRUE,
   bias_correction = FALSE, early_stop = FALSE,
-  verbose = TRUE, ncores = 1
+  verbose = FALSE, ncores = 1
 ){
+  if(ncores > 1){
+    if(verbose){
+      lapply_ <- pbmcapply::pbmclapply
+    } else {
+      lapply_ <- parallel::mclapply
+    }
+  } else {
+     if(verbose){
+      lapply_ <- pbapply::pblapply
+    } else {
+      lapply_ <- lapply
+    }
+  }
 
-  mclapply_ <- if(verbose) pbmcapply::pbmclapply else parallel::mclapply
-
-  apply_fun <- function(i, boot_dt){
+  apply_func <- function(i, boot_dt){
     if(boot_dt == 'sick'){
       sick_dt_ <- sick_dt[-i,]
       healthy_dt_ <- healthy_dt
@@ -22,36 +31,36 @@ estimate_alpha_jacknife <- function(
     }
 
     weight_matrix <- corrmat_covariance_from_dt(sick_dt_)
-
-    cov_model <- inner_optim_loop(
+    cov_model <- optimiser(
       healthy_dt = healthy_dt_, sick_dt = sick_dt_,
       alpha0 = alpha0, theta0 = theta0, dim_alpha = dim_alpha,
-      weight_matrix = weight_matrix, linkFun = linkFun,
+      weight_matrix = weight_matrix, LinkFunc = LinkFunc,
       model_reg_config = model_reg_config, matrix_reg_config = matrix_reg_config,
       iter_config = cov_config$iter_config, optim_config = cov_config$optim_config,
       early_stop = early_stop, verbose = FALSE
     )
 
-    if(bias_correction) cov_model$alpha <- cov_model$alpha - median(cov_model$alpha) + linkFun$null_value
+    if(bias_correction)
+      cov_model$alpha <- cov_model$alpha - median(cov_model$alpha) + LinkFunc$null_value
 
-    gee_out <- if(return_gee){
-      triangle2vector(
-        compute_gee_variance(
-          cov_obj = cov_model,
-          healthy_dt = healthy_dt_,
-          sick_dt = sick_dt_,
-          est_mu = TRUE
-        ),
-        diag = TRUE
-      )
-    } else NA
+    gee_out <- NA
+    if(return_gee){
+      gee_out <- triangle2vector(compute_gee_variance(
+        cov_obj = cov_model,
+        healthy_dt = healthy_dt_,
+        sick_dt = sick_dt_,
+        est_mu = TRUE),
+        diag = TRUE)
+    }
 
-    return(list(
+    out <- list(
       theta = cov_model$theta,
       alpha = cov_model$alpha,
       convergence = tail(cov_model$convergence, 1),
       gee_var = gee_out
-    ))
+    )
+
+    return(out)
   }
 
   for(name in c('iter_config', 'optim_config')){
@@ -67,7 +76,7 @@ estimate_alpha_jacknife <- function(
       healthy_dt = healthy_dt,
       sick_dt = sick_dt,
       dim_alpha = dim_alpha,
-      linkFun = linkFun,
+      LinkFunc = LinkFunc,
       model_reg_config = model_reg_config,
       matrix_reg_config = matrix_reg_config,
       raw_start = TRUE,
@@ -77,14 +86,28 @@ estimate_alpha_jacknife <- function(
       early_stop = early_stop,
       verbose = FALSE
     )
-    index <- if(length(ini_model$steps) > 3) (length(ini_model$steps) - 3) else (length(ini_model$steps) - 1)
+
+    ini_model_steps <- length(ini_model$steps)
+    index <- ini_model_steps - 1
+    if(ini_model_steps > 3)
+      index <- ini_model_steps - 3
+
     ini_model <- ini_model$steps[[index]]
-    if(is.null(alpha0)) alpha0 <- as.vector(ini_model$alpha)
-    if(is.null(theta0)) theta0 <- ini_model$theta
+    if(is.null(alpha0))
+      alpha0 <- as.vector(ini_model$alpha)
+    if(is.null(theta0))
+      theta0 <- ini_model$theta
   }
 
-  if(verbose) cat('\njacknifing Sick Observations...\n')
-  cov_obj_sick <- mclapply_(seq_len(nrow(sick_dt)), apply_fun, boot_dt = 'sick', mc.cores = ncores)
+  if(verbose)
+    cat('\njacknifing Sick Observations...\n')
+
+  if(ncores > 1){
+    cov_obj_sick <- lapply_(seq_len(nrow(sick_dt)), apply_func, boot_dt = 'sick', mc.cores = ncores)
+  } else {
+    cov_obj_sick <- lapply_(seq_len(nrow(sick_dt)), apply_func, boot_dt = 'sick')
+  }
+
   cov_obj_sick_t <- purrr::transpose(cov_obj_sick)
 
   theta <- do.call(rbind, cov_obj_sick_t$theta)
@@ -93,8 +116,14 @@ estimate_alpha_jacknife <- function(
   gee_var <- do.call(rbind, cov_obj_sick_t$gee_var)
 
   if(jack_healthy){
-    if(verbose) cat('\njacknifing Healthy Observations...\n')
-    cov_obj_healthy <- mclapply_(seq_len(nrow(healthy_dt)), apply_fun, boot_dt = 'healthy', mc.cores = ncores)
+    if(verbose)
+      cat('\njacknifing Healthy Observations...\n')
+    if(ncores > 1){
+      cov_obj_healthy <- lapply_(seq_len(nrow(healthy_dt)), apply_func, boot_dt = 'healthy', mc.cores = ncores)
+    } else {
+      cov_obj_healthy <- lapply_(seq_len(nrow(healthy_dt)), apply_func, boot_dt = 'healthy')
+    }
+
     cov_obj_healthy_t <- purrr::transpose(cov_obj_healthy)
 
     theta_h <- do.call(rbind, cov_obj_healthy_t$theta)
@@ -109,12 +138,14 @@ estimate_alpha_jacknife <- function(
     is_sick <- c(rep(0, nrow(healthy_dt)), rep(1, nrow(sick_dt)))
   }
 
-  return(list(
+  output <- list(
     theta = theta,
     alpha = alpha,
     gee_var = gee_var,
     convergence = convergence,
     is_sick = is_sick,
-    linkFun = linkFun
-  ))
+    LinkFunc = LinkFunc
+  )
+
+  return(output)
 }

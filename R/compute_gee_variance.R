@@ -1,9 +1,9 @@
-compute_mu_alpha_jacobian <- function(group, alpha, healthy_dt, sick_dt, d = 1, linkFun)
+compute_mu_alpha_jacobian <- function(group, alpha, healthy_dt, sick_dt, d = 1, LinkFunc)
 {
    if(group == 'sick'){
      func <- function(A){
-       out <- triangle2vector(linkFun$func(
-         t = theta_of_alpha(A, healthy_dt, sick_dt, linkFun = linkFun, d = d),
+       out <- triangle2vector(LinkFunc$func(
+         t = theta_of_alpha(A, healthy_dt, sick_dt, LinkFunc = LinkFunc, d = d),
          a = A,
          d = d
        ))
@@ -11,7 +11,7 @@ compute_mu_alpha_jacobian <- function(group, alpha, healthy_dt, sick_dt, d = 1, 
      }
    } else if(group == 'healthy'){
      func <- function(A){
-       out <- theta_of_alpha(A, healthy_dt, sick_dt, linkFun = linkFun, d = d)
+       out <- theta_of_alpha(A, healthy_dt, sick_dt, LinkFunc = LinkFunc, d = d)
        return(out)
      }
    }
@@ -38,13 +38,13 @@ compute_gee_variance <- function(cov_obj,
       healthy_dt = healthy_data,
       sick_dt = sick_data,
       d = d,
-      linkFun = cov_obj$linkFun)
+      LinkFunc = cov_obj$LinkFunc)
 
     if(est_mu){
       if(group == 'healthy'){
         expected_value <- cov_obj$theta
       } else {
-        expected_value <- triangle2vector(cov_obj$linkFun$func(
+        expected_value <- triangle2vector(cov_obj$LinkFunc$func(
           t = cov_obj$theta,
           a = cov_obj$alpha,
           d = d))

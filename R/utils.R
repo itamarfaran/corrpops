@@ -20,7 +20,7 @@ sqrt_diag <- function(x) return(sqrt(diag(x)))
 force_symmetry <- function(matr) return(0.5 * (t(matr) + matr))
 
 
-vnorm <- function(x, matr, sqrt = FALSE, solve_matr = FALSE)
+vect_norm <- function(x, matr, sqrt = FALSE, solve_matr = FALSE)
 {
   if(missing(matr)){
     out <- sum(x^2)

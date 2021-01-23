@@ -1,11 +1,11 @@
-# todo: beautify
-estimate_alpha <- function(
+estimate_model <- function(
   healthy_dt, sick_dt, dim_alpha = 1,
-  linkFun = linkFunctions$multiplicative_identity,
+  LinkFunc = LinkFunctions$multiplicative_identity,
   model_reg_config = list(), matrix_reg_config = list(),
-  raw_start = FALSE, iid_config = list(), cov_config = list(),
-  bias_correction = FALSE, early_stop = FALSE, verbose = TRUE){
-
+  iid_config = list(), cov_config = list(),
+  raw_start = FALSE, bias_correction = FALSE, early_stop = FALSE,
+  verbose = TRUE)
+{
   for(name in c('iter_config', 'optim_config')){
     if(!name %in% names(iid_config)) iid_config[[name]] <- list()
     if(!name %in% names(cov_config)) cov_config[[name]] <- list()
@@ -17,11 +17,10 @@ estimate_alpha <- function(
 
   alpha0 <- theta0 <- NULL
   if(!raw_start){
-    iid_model <- inner_optim_loop(
+    iid_model <- optimiser(
       healthy_dt = healthy_dt, sick_dt = sick_dt,
       alpha0 = NULL, theta0 = NULL,
-      weight_matrix = NULL, dim_alpha = dim_alpha,
-      linkFun = linkFun,
+      weight_matrix = NULL, dim_alpha = dim_alpha, LinkFunc = LinkFunc,
       model_reg_config = model_reg_config, matrix_reg_config = matrix_reg_config,
       iter_config = iid_config$iter_config, optim_config = iid_config$optim_config,
       early_stop = early_stop, verbose = verbose[1]
@@ -32,16 +31,17 @@ estimate_alpha <- function(
 
   weight_matrix <- corrmat_covariance_from_dt(sick_dt)
 
-  cov_model <- inner_optim_loop(
+  cov_model <- optimiser(
     healthy_dt = healthy_dt, sick_dt = sick_dt,
     alpha0 = alpha0, theta0 = theta0,
-    weight_matrix = weight_matrix, linkFun = linkFun,
+    weight_matrix = weight_matrix, LinkFunc = LinkFunc,
     model_reg_config = model_reg_config, matrix_reg_config = matrix_reg_config,
     iter_config = cov_config$iter_config, optim_config = cov_config$optim_config,
     early_stop = early_stop, verbose = verbose[2]
   )
 
-  if(bias_correction) cov_model$alpha <- cov_model$alpha - median(cov_model$alpha) + linkFun$null_value
+  if(bias_correction)
+    cov_model$alpha <- cov_model$alpha - median(cov_model$alpha) + LinkFunc$null_value
 
   return(cov_model)
 }

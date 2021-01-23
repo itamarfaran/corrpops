@@ -40,7 +40,7 @@ additive_quotent <- list(
 )
 
 
-linkFunctions <- list(
+LinkFunctions <- list(
   multiplicative_identity = multiplicative_identity,
   additive_quotent = additive_quotent
 )

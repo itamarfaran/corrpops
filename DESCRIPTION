@@ -13,11 +13,13 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Imports:
+  purrr,
   mvtnorm,
   numDeriv,
   matrixcalc,
   Rcpp (>= 1.0.4)
 Suggests:
   Matrix,
-  parallel
+  parallel,
+  pbmcapply
 LinkingTo: Rcpp
