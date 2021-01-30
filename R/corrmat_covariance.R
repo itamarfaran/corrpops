@@ -7,7 +7,7 @@
 #' @param nonpositive error handling when matrix with not positive definite. can be one of 'stop', 'force', 'ignore'. if 'force' is chosen, \link[Matrix]{nearPD} will be used.
 #' @param use_cpp, whether to use c++ source code. default true.
 #' @return the covariance matrix
-#' @seealso \link[corrfuncs]{corrmat_covariance_from_dt}
+#' @seealso \link[corrfuncs]{corrmat_covariance_from_datamatrix}
 #' @export
 
 corrmat_covariance <- function(matr, fisher_z = FALSE, nonpositive = c('stop', 'force', 'ignore'), use_cpp = TRUE){
@@ -53,7 +53,7 @@ corrmat_covariance <- function(matr, fisher_z = FALSE, nonpositive = c('stop', '
 #'
 #' Calculate the average covariance matrix of multiple correlation matrices.
 #'
-#' @param dt the sample of correlation matrices. can be an array of matrices, or a matrix of vectorized correlation matrices.
+#' @param datamatrix the sample of correlation matrices. can be an array of matrices, or a matrix of vectorized correlation matrices.
 #' @param fisher_z if true, calculate the covariance matrix of a fisher-Z transformed correlation matrix. It is assumed that the correlations are Fisher transformed, and the matrix will under go the Inverse Fisher Transformation.
 #' @param est_n whether to divide the covariance matrix by the estimated degrees of freedom, with a linear projection.
 #' @param only_diag passed to \link[corrfuncs]{compute_estimated_n}
@@ -63,14 +63,14 @@ corrmat_covariance <- function(matr, fisher_z = FALSE, nonpositive = c('stop', '
 #' @return the averaged covariance matrix
 #' @seealso \link[corrfuncs]{corrmat_covariance}
 #' @export
-corrmat_covariance_from_dt <- function(dt, fisher_z = FALSE,
+corrmat_covariance_from_datamatrix <- function(datamatrix, fisher_z = FALSE,
                                        est_n = FALSE, only_diag = TRUE,
                                        nonpositive = c('ignore', 'stop', 'force'),
                                        use_cpp = TRUE, ncores = 1){
 
-  dt <- convert_corr_array_to_data_matrix(dt)
-  index <- seq_len(nrow(dt))
-  func <- function(i) corrmat_covariance(dt[i,], fisher_z = fisher_z, nonpositive = nonpositive, use_cpp = use_cpp)
+  datamatrix <- convert_corr_array_to_data_matrix(datamatrix)
+  index <- seq_len(nrow(datamatrix))
+  func <- function(i) corrmat_covariance(datamatrix[i,], fisher_z = fisher_z, nonpositive = nonpositive, use_cpp = use_cpp)
 
   if(ncores > 1){
     covariances <- parallel::mclapply(index, func, mc.cores = ncores)
@@ -81,7 +81,7 @@ corrmat_covariance_from_dt <- function(dt, fisher_z = FALSE,
   sigma <- calculate_mean_matrix(simplify2array(covariances))
 
   if(est_n){
-    est <- t(dt) %*% dt / nrow(dt)
+    est <- t(datamatrix) %*% datamatrix / nrow(datamatrix)
     estimated_n <- compute_estimated_n_raw(est = est, theo = sigma, only_diag = only_diag)
     sigma <- sigma/estimated_n
   }

@@ -1,19 +1,19 @@
-theta_of_alpha <- function(alpha, control_dt, diagnosed_dt, LinkFunc, d = 1){
-  out <- rbind(LinkFunc$rev_func(dt = diagnosed_dt, a = alpha, d = d), control_dt)
+theta_of_alpha <- function(alpha, control_datamatrix, diagnosed_datamatrix, LinkFunc, d = 1){
+  out <- rbind(LinkFunc$rev_func(datamatrix = diagnosed_datamatrix, a = alpha, d = d), control_datamatrix)
   out <- colMeans(out)
   return(out)
 }
 
 
 sum_of_squares <- function(
-  alpha, theta, diagnosed_dt, inv_sigma, LinkFunc,
+  alpha, theta, diagnosed_datamatrix, inv_sigma, LinkFunc,
   sigma, dim_alpha = 1, reg_lambda = 0, reg_p = 2)
 {
   if(missing(inv_sigma))
     inv_sigma <- solve(sigma)
 
   g11 <- as.matrix(triangle2vector(LinkFunc$func(t = theta, a = alpha, d = dim_alpha)))
-  sse <- nrow(diagnosed_dt) * t(g11) %*% inv_sigma %*% ( 0.5 * g11 - colMeans(diagnosed_dt) )
+  sse <- nrow(diagnosed_datamatrix) * t(g11) %*% inv_sigma %*% ( 0.5 * g11 - colMeans(diagnosed_datamatrix) )
 
   if(reg_lambda > 0)
     sse <- sse + reg_lambda*sum((alpha - LinkFunc$null_value)^reg_p)
@@ -30,7 +30,7 @@ get_update_message <- function(i, start_time, convergence, distance){
 
 
 optimiser <- function(
-  control_dt, diagnosed_dt, alpha0, theta0, weight_matrix, dim_alpha, LinkFunc,
+  control_datamatrix, diagnosed_datamatrix, alpha0, theta0, weight_matrix, dim_alpha, LinkFunc,
   model_reg_config, matrix_reg_config, iter_config, optim_config, early_stop, verbose)
 {
 

@@ -25,9 +25,9 @@ compute_estimated_n_raw <- function(est, theo, only_diag = FALSE)
 #' @return numeric, the estimated degrees of freedom
 compute_estimated_n <- function(obj, only_diag = TRUE)
 {
-  dt <- convert_corr_array_to_data_matrix(obj)
-  est <- t(dt) %*% dt / nrow(dt)
-  theo <- corrmat_covariance_from_dt(dt)
+  datamatrix <- convert_corr_array_to_data_matrix(obj)
+  est <- t(datamatrix) %*% datamatrix / nrow(datamatrix)
+  theo <- corrmat_covariance_from_datamatrix(datamatrix)
   out <- compute_estimated_n_raw(est = est, theo = theo, only_diag = only_diag)
   return(out)
 }
