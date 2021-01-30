@@ -1,3 +1,17 @@
+#' Compute the Jacobian by Alpha parameter
+#'
+#' Helper function to calulcate the Jacobian of the expected value by Alpha:
+#' \eqn{J_{\alpha}\left(g\left(\Theta,\alpha\right)\right)_{ij}=
+#' \frac{\partial g_{i}\left(\Theta,\alpha\right)}{\partial\alpha_{j}}}
+#'
+#' @param group can be either 'diagnosed' or 'control'
+#' @param alpha the vector to calculate the Jacobian on
+#' @param control_dt array of correlation matrices of control group, vectorized and organized in a data matrix
+#' @param diagnosed_dt same as control_dt but of the diagnosed group
+#' @param d the number of columns in alpha, default 1
+#' @param linkFunc the link funtion $g$ to use
+#' @return the Jacobian matrix
+#'
 compute_mu_alpha_jacobian <- function(group, alpha, control_dt, diagnosed_dt, d = 1, LinkFunc)
 {
    if(group == 'diagnosed'){
@@ -20,13 +34,27 @@ compute_mu_alpha_jacobian <- function(group, alpha, control_dt, diagnosed_dt, d 
 }
 
 
-compute_gee_variance <- function(cov_obj,
+#' Compute Estimates' Variance Using a GEE Framework
+#'
+#' Estimate the estimators' variance using a Generelized Estimation Equations framwork
+#'
+#' @param mod an object created by \link[corrfuncs]{estimate_model}
+#' @param control_dt array of correlation matrices of control group. can be passed as a matrix, each row is a vectorized correlation matrix
+#' @param diagnosed_dt same as control_dt but of the diagnosed group
+#' @param est_mu whether to use the expected value estimated in the model or the sample average. default TRUE.
+#' @param reg_lambda todo: drop, should inherit from mod
+#' @param reg_p todo: drop, should inherit from mod
+#' @return fisher information matrix of alpha
+#'
+#' @export
+#'
+compute_gee_variance <- function(mod,
                                  control_dt, diagnosed_dt,
                                  est_mu = TRUE, reg_lambda = 0, reg_p = 2)
 {
   inner <- function(group){
     p <- 0.5 + sqrt(1 + 8*ncol(data))/2
-    d <- length(cov_obj$alpha)/p
+    d <- length(mod$alpha)/p
 
     control_data <- convert_corr_array_to_data_matrix(control_dt)
     diagnosed_data <- convert_corr_array_to_data_matrix(diagnosed_dt)
@@ -34,19 +62,19 @@ compute_gee_variance <- function(cov_obj,
 
     jacobian <- compute_mu_alpha_jacobian(
       group = group,
-      alpha = cov_obj$alpha,
+      alpha = mod$alpha,
       control_dt = control_data,
       diagnosed_dt = diagnosed_data,
       d = d,
-      LinkFunc = cov_obj$LinkFunc)
+      LinkFunc = mod$LinkFunc)
 
     if(est_mu){
       if(group == 'control'){
-        expected_value <- cov_obj$theta
+        expected_value <- mod$theta
       } else {
-        expected_value <- triangle2vector(cov_obj$LinkFunc$func(
-          t = cov_obj$theta,
-          a = cov_obj$alpha,
+        expected_value <- triangle2vector(mod$LinkFunc$func(
+          t = mod$theta,
+          a = mod$alpha,
           d = d))
       }
     } else {

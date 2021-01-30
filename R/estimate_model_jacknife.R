@@ -46,7 +46,7 @@ estimate_model_jacknife <- function(
     gee_out <- NA
     if(return_gee){
       gee_out <- triangle2vector(compute_gee_variance(
-        cov_obj = cov_model,
+        mod = cov_model,
         control_dt = control_dt_,
         diagnosed_dt = diagnosed_dt_,
         est_mu = TRUE),
@@ -103,33 +103,33 @@ estimate_model_jacknife <- function(
     cat('\njacknifing diagnosed observations...\n')
 
   if(ncores > 1){
-    cov_obj_diagnosed <- lapply_(seq_len(nrow(diagnosed_dt)), apply_func, boot_dt = 'diagnosed', mc.cores = ncores)
+    mod_diagnosed <- lapply_(seq_len(nrow(diagnosed_dt)), apply_func, boot_dt = 'diagnosed', mc.cores = ncores)
   } else {
-    cov_obj_diagnosed <- lapply_(seq_len(nrow(diagnosed_dt)), apply_func, boot_dt = 'diagnosed')
+    mod_diagnosed <- lapply_(seq_len(nrow(diagnosed_dt)), apply_func, boot_dt = 'diagnosed')
   }
 
-  cov_obj_diagnosed_t <- purrr::transpose(cov_obj_diagnosed)
+  mod_diagnosed_t <- purrr::transpose(mod_diagnosed)
 
-  theta <- do.call(rbind, cov_obj_diagnosed_t$theta)
-  alpha <- do.call(rbind, lapply(cov_obj_diagnosed_t$alpha, as.vector))
-  convergence <- do.call(c, cov_obj_diagnosed_t$convergence)
-  gee_var <- do.call(rbind, cov_obj_diagnosed_t$gee_var)
+  theta <- do.call(rbind, mod_diagnosed_t$theta)
+  alpha <- do.call(rbind, lapply(mod_diagnosed_t$alpha, as.vector))
+  convergence <- do.call(c, mod_diagnosed_t$convergence)
+  gee_var <- do.call(rbind, mod_diagnosed_t$gee_var)
 
   if(jack_control){
     if(verbose)
       cat('\njacknifing control observations...\n')
     if(ncores > 1){
-      cov_obj_control <- lapply_(seq_len(nrow(control_dt)), apply_func, boot_dt = 'control', mc.cores = ncores)
+      mod_control <- lapply_(seq_len(nrow(control_dt)), apply_func, boot_dt = 'control', mc.cores = ncores)
     } else {
-      cov_obj_control <- lapply_(seq_len(nrow(control_dt)), apply_func, boot_dt = 'control')
+      mod_control <- lapply_(seq_len(nrow(control_dt)), apply_func, boot_dt = 'control')
     }
 
-    cov_obj_control_t <- purrr::transpose(cov_obj_control)
+    mod_control_t <- purrr::transpose(mod_control)
 
-    theta_h <- do.call(rbind, cov_obj_control_t$theta)
-    alpha_h <- do.call(rbind, lapply(cov_obj_control_t$alpha, as.vector))
-    convergence_h <- do.call(c, cov_obj_control_t$convergence)
-    gee_var_h <- do.call(rbind, cov_obj_control_t$gee_var)
+    theta_h <- do.call(rbind, mod_control_t$theta)
+    alpha_h <- do.call(rbind, lapply(mod_control_t$alpha, as.vector))
+    convergence_h <- do.call(c, mod_control_t$convergence)
+    gee_var_h <- do.call(rbind, mod_control_t$gee_var)
 
     theta <- rbind(theta_h, theta)
     alpha <- rbind(alpha_h, alpha)

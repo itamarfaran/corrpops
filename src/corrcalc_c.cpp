@@ -2,6 +2,14 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
+//' Calculate the Covariance Matrix of a Vectorized Correlation matrix
+//'
+//' For inner use.
+//'
+//' @name corrcalc_c
+//'
+//' @seealso \link[corrfuncs]{corrmat_covariance} \link[corrfuncs]{triangle2vector}
+
 // [[Rcpp::export]]
 NumericMatrix corrcalc_c(NumericMatrix matr, int m,
                          NumericVector order_vecti,
