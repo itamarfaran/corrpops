@@ -6,18 +6,18 @@
 #'
 #' @param group can be either 'diagnosed' or 'control'
 #' @param alpha the vector to calculate the Jacobian on
-#' @param control_dt array of correlation matrices of control group, vectorized and organized in a data matrix
-#' @param diagnosed_dt same as control_dt but of the diagnosed group
+#' @param control_datamatrix array of correlation matrices of control group, vectorized and organized in a data matrix
+#' @param diagnosed_datamatrix same as control_datamatrix but of the diagnosed group
 #' @param d the number of columns in alpha, default 1
 #' @param linkFunc the link funtion $g$ to use
 #' @return the Jacobian matrix
 #'
-compute_mu_alpha_jacobian <- function(group, alpha, control_dt, diagnosed_dt, d = 1, LinkFunc)
+compute_mu_alpha_jacobian <- function(group, alpha, control_datamatrix, diagnosed_datamatrix, d = 1, LinkFunc)
 {
    if(group == 'diagnosed'){
      func <- function(A){
        out <- triangle2vector(LinkFunc$func(
-         t = theta_of_alpha(A, control_dt, diagnosed_dt, LinkFunc = LinkFunc, d = d),
+         t = theta_of_alpha(A, control_datamatrix, diagnosed_datamatrix, LinkFunc = LinkFunc, d = d),
          a = A,
          d = d
        ))
@@ -25,7 +25,7 @@ compute_mu_alpha_jacobian <- function(group, alpha, control_dt, diagnosed_dt, d 
      }
    } else if(group == 'control'){
      func <- function(A){
-       out <- theta_of_alpha(A, control_dt, diagnosed_dt, LinkFunc = LinkFunc, d = d)
+       out <- theta_of_alpha(A, control_datamatrix, diagnosed_datamatrix, LinkFunc = LinkFunc, d = d)
        return(out)
      }
    }
@@ -39,8 +39,8 @@ compute_mu_alpha_jacobian <- function(group, alpha, control_dt, diagnosed_dt, d 
 #' Estimate the estimators' variance using a Generelized Estimation Equations framwork
 #'
 #' @param mod an object created by \link[corrfuncs]{estimate_model}
-#' @param control_dt array of correlation matrices of control group. can be passed as a matrix, each row is a vectorized correlation matrix
-#' @param diagnosed_dt same as control_dt but of the diagnosed group
+#' @param control_arr array of correlation matrices of control group. can be passed as a matrix, each row is a vectorized correlation matrix
+#' @param diagnosed_arr same as control_arr but of the diagnosed group
 #' @param est_mu whether to use the expected value estimated in the model or the sample average. default TRUE.
 #' @param reg_lambda todo: drop, should inherit from mod
 #' @param reg_p todo: drop, should inherit from mod
@@ -63,8 +63,8 @@ compute_gee_variance <- function(mod,
     jacobian <- compute_mu_alpha_jacobian(
       group = group,
       alpha = mod$alpha,
-      control_dt = control_datamatrix,
-      diagnosed_dt = diagnosed_datamatrix,
+      control_datamatrix = control_datamatrix,
+      diagnosed_datamatrix = diagnosed_datamatrix,
       d = d,
       LinkFunc = mod$LinkFunc)
 
@@ -81,7 +81,7 @@ compute_gee_variance <- function(mod,
       expected_value <- colMeans(data)
     }
 
-    solve_sigma <- solve(corrmat_covariance_from_dt(data, est_n = T))
+    solve_sigma <- solve(corrmat_covariance_from_datamatrix(data, est_n = T))
     df <- nrow(data) - 1
     # or:
     # efrons_effective_sample_size(

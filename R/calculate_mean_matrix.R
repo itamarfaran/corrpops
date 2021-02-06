@@ -11,7 +11,7 @@
 #'
 #' @export
 #'
-vector_sum <- function(matr, index, constants, weights = FALSE, by_row = TRUE)
+sum_vector <- function(matr, index, constants, weights = FALSE, by_row = TRUE)
   {
   if(!by_row)
     matr <- t(matr)
@@ -44,7 +44,7 @@ vector_sum <- function(matr, index, constants, weights = FALSE, by_row = TRUE)
 #'
 #' @export
 #'
-matrix_sum <- function(arr, index, constants, weights = FALSE)
+sum_matrix <- function(arr, index, constants, weights = FALSE)
   {
   dim_arr <- dim(arr)
   out <- matrix(0, nrow = dim_arr[1], ncol = dim_arr[2])
@@ -73,5 +73,5 @@ matrix_sum <- function(arr, index, constants, weights = FALSE)
 #' @export
 #'
 calculate_mean_matrix <- function(arr){
-  return(matrix_sum(arr, weights = TRUE))
+  return(sum_matrix(arr, weights = TRUE))
 }

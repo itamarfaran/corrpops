@@ -5,7 +5,7 @@
 #' @param matr the correlation matrix. can be vectorized.
 #' @param fisher_z if true, calculate the covariance matrix of a fisher-Z transformed correlation matrix. It is assumed that the correlations are Fisher transformed, and the matrix will under go the Inverse Fisher Transformation.
 #' @param nonpositive error handling when matrix with not positive definite. can be one of 'stop', 'force', 'ignore'. if 'force' is chosen, \link[Matrix]{nearPD} will be used.
-#' @param use_cpp, whether to use c++ source code. default true.
+#' @param use_cpp whether to use c++ source code. default true.
 #' @return the covariance matrix
 #' @seealso \link[corrfuncs]{corrmat_covariance_from_datamatrix}
 #' @export

@@ -2,7 +2,8 @@
 #'
 #' For inner use.
 #'
-#' @seealso \link[corrfuncs]{corrmat_covariance} \link[corrfuncs]{triangle2vector}
+#' @seealso \link[corrfuncs]{corrmat_covariance}
+#' @seealso \link[corrfuncs]{triangle2vector}
 corrcalc_r <- function(matr, m, order_vecti, order_vectj)
 {
   output <- matrix(0, nrow = m, ncol = m)

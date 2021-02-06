@@ -8,10 +8,10 @@ convert_corr_array_to_data_matrix_raw <- function(arr) t(apply(arr, 3, triangle2
 #' Each matrix becomes a row in the output matrix. If obj is already of class matrix, nothing is perfomred.
 #' @seealso \link[corrfuncs]{triangle2vector}
 #'
-#' @param obj An array of square, symmetrical matrices or a data matrix of such form.
+#' @param arr An array of square, symmetrical matrices or a data matrix of such form.
 #' @return Matrix with vectorized matrices as rows
 #' @export
-convert_corr_array_to_data_matrix <- function(obj, verbose = FALSE)
+convert_corr_array_to_data_matrix <- function(arr, verbose = FALSE)
 {
   if(class(arr) == 'array'){
     msg <- 'array transformed from array to matrix'

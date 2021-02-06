@@ -107,12 +107,12 @@ rWishart_ARMA <- function(n = 1, df, Sigma, random_effect = NULL, AR = NULL, MA 
     for(i in 2:df){
       if(!is.null(AR)){
         arlag <- min(max_ar, i - 1)
-        normal_matrix_arma[i,] <- normal_matrix_arma[i,] + vector_sum(normal_matrix_arma, (i - arlag):(i - 1), rev(AR[1:arlag]))
+        normal_matrix_arma[i,] <- normal_matrix_arma[i,] + sum_vector(normal_matrix_arma, (i - arlag):(i - 1), rev(AR[1:arlag]))
         # X[i] = epsilon[i] + X[i-1] + ...
       }
       if(!is.null(MA)){
         malag <- min(max_ma, i - 1)
-        normal_matrix_arma[i,] <- normal_matrix_arma[i,] + vector_sum(normal_matrix, (i - malag):(i - 1) , rev(MA[1:malag]))
+        normal_matrix_arma[i,] <- normal_matrix_arma[i,] + sum_vector(normal_matrix, (i - malag):(i - 1) , rev(MA[1:malag]))
         # X[i] = epsilon[i] + X[i-1] + ... + epsilon[i-1] + ...
       }
     }
