@@ -23,3 +23,5 @@ Suggests:
   parallel,
   pbmcapply
 LinkingTo: Rcpp
+Depends: 
+    R (>= 2.10)
