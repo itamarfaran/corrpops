@@ -1,5 +1,29 @@
+#' Jackknife Estimation of Model
+#'
+#' todo: explain
+#'
+#' @param control_arr array of control group correlation matrices. either an array or data matrix form
+#' @param diagnosed_arr array of diagnosed group correlation matrices. either an array or data matrix form
+#' @param dim_alpha the number of columns in alpha. default 1
+#' @param alpha0 starting point for alpha in the optimization. if null (the default), will use LinkFunc$null_value
+#' @param theta0 starting point for alpha in the optimization. if null (the default), will the average matrix of all subjects
+#' @param LinkFunc a list of function. must include func, inverse, rev_func and null_value. @seealso LinkFunc
+#' @param model_reg_config list of configurations for the model regularization seealso
+#' @param matrix_reg_config list of configurations for the covariance matrix's regularization seealso
+#' @param iid_config list of configurations for the optimization of the model with identity matrix covariance matrix seealso
+#' @param cov_config list of configurations for the optimization of the model with specified covariance matrix seealso
+#' @param return_gee if true, calculate the gee estimate of variance in each jackknife
+#' @param jack_control if false, don't jackknife control subjects
+#' @param bias_correction if true, correct the estimates to the median: a' = a - med(a) + null_value
+#' @param early_stop if true, stop the optimization of the joint loss function (of theta and alpha) didn't decrease.
+#' @param verbose if true, print status to console
+#' @param ncores number of cores to use in parallel
+#' @return a list of todo
+#'
+#' @export
+#'
 estimate_model_jacknife <- function(
-  control_dt, diagnosed_dt, dim_alpha = 1, alpha0 = NULL, theta0 = NULL,
+  control_arr, diagnosed_arr, dim_alpha = 1, alpha0 = NULL, theta0 = NULL,
   LinkFunc = LinkFunctions$multiplicative_identity,
   model_reg_config = list(), matrix_reg_config = list(),
   iid_config = list(iter_config = list(min_loop = 0)), cov_config = list(),
@@ -21,18 +45,18 @@ estimate_model_jacknife <- function(
     }
   }
 
-  apply_func <- function(i, boot_dt){
-    if(boot_dt == 'diagnosed'){
-      diagnosed_dt_ <- diagnosed_dt[-i,]
-      control_dt_ <- control_dt
-    } else if(boot_dt == 'control'){
-      diagnosed_dt_ <- diagnosed_dt
-      control_dt_ <- control_dt[-i,]
+  apply_func <- function(i, boot_datamatrix){
+    if(boot_datamatrix == 'diagnosed'){
+      diagnosed_datamatrix_ <- diagnosed_datamatrix[-i,]
+      control_datamatrix_ <- control_datamatrix
+    } else if(boot_datamatrix == 'control'){
+      diagnosed_datamatrix_ <- diagnosed_datamatrix
+      control_datamatrix_ <- control_datamatrix[-i,]
     }
 
-    weight_matrix <- corrmat_covariance_from_dt(diagnosed_dt_)
+    weight_matrix <- corrmat_covariance_from_data_matrix(diagnosed_datamatrix_)
     cov_model <- optimiser(
-      control_dt = control_dt_, diagnosed_dt = diagnosed_dt_,
+      control_datamatrix = control_datamatrix_, diagnosed_datamatrix = diagnosed_datamatrix_,
       alpha0 = alpha0, theta0 = theta0, dim_alpha = dim_alpha,
       weight_matrix = weight_matrix, LinkFunc = LinkFunc,
       model_reg_config = model_reg_config, matrix_reg_config = matrix_reg_config,
@@ -47,8 +71,8 @@ estimate_model_jacknife <- function(
     if(return_gee){
       gee_out <- triangle2vector(compute_gee_variance(
         mod = cov_model,
-        control_dt = control_dt_,
-        diagnosed_dt = diagnosed_dt_,
+        control_arr = control_datamatrix_,
+        diagnosed_arr = diagnosed_datamatrix_,
         est_mu = TRUE),
         diag = TRUE)
     }
@@ -68,13 +92,13 @@ estimate_model_jacknife <- function(
     if(!name %in% names(cov_config)) cov_config[[name]] <- list()
   }
 
-  control_dt <- convert_corr_array_to_data_matrix(control_dt)
-  diagnosed_dt <- convert_corr_array_to_data_matrix(diagnosed_dt)
+  control_datamatrix <- convert_corr_array_to_data_matrix(control_arr)
+  diagnosed_datamatrix <- convert_corr_array_to_data_matrix(diagnosed_arr)
 
   if(is.null(alpha0) | is.null(theta0)){
     ini_model <- estimate_alpha(
-      control_dt = control_dt,
-      diagnosed_dt = diagnosed_dt,
+      control_datamatrix = control_datamatrix,
+      diagnosed_datamatrix = diagnosed_datamatrix,
       dim_alpha = dim_alpha,
       LinkFunc = LinkFunc,
       model_reg_config = model_reg_config,
@@ -103,9 +127,9 @@ estimate_model_jacknife <- function(
     cat('\njacknifing diagnosed observations...\n')
 
   if(ncores > 1){
-    mod_diagnosed <- lapply_(seq_len(nrow(diagnosed_dt)), apply_func, boot_dt = 'diagnosed', mc.cores = ncores)
+    mod_diagnosed <- lapply_(seq_len(nrow(diagnosed_datamatrix)), apply_func, boot_datamatrix = 'diagnosed', mc.cores = ncores)
   } else {
-    mod_diagnosed <- lapply_(seq_len(nrow(diagnosed_dt)), apply_func, boot_dt = 'diagnosed')
+    mod_diagnosed <- lapply_(seq_len(nrow(diagnosed_datamatrix)), apply_func, boot_datamatrix = 'diagnosed')
   }
 
   mod_diagnosed_t <- purrr::transpose(mod_diagnosed)
@@ -119,9 +143,9 @@ estimate_model_jacknife <- function(
     if(verbose)
       cat('\njacknifing control observations...\n')
     if(ncores > 1){
-      mod_control <- lapply_(seq_len(nrow(control_dt)), apply_func, boot_dt = 'control', mc.cores = ncores)
+      mod_control <- lapply_(seq_len(nrow(control_datamatrix)), apply_func, boot_datamatrix = 'control', mc.cores = ncores)
     } else {
-      mod_control <- lapply_(seq_len(nrow(control_dt)), apply_func, boot_dt = 'control')
+      mod_control <- lapply_(seq_len(nrow(control_datamatrix)), apply_func, boot_datamatrix = 'control')
     }
 
     mod_control_t <- purrr::transpose(mod_control)
@@ -135,7 +159,7 @@ estimate_model_jacknife <- function(
     alpha <- rbind(alpha_h, alpha)
     convergence <- c(convergence_h, convergence)
     gee_var <- rbind(gee_var, gee_var_h)
-    is_diagnosed <- c(rep(0, nrow(control_dt)), rep(1, nrow(diagnosed_dt)))
+    is_diagnosed <- c(rep(0, nrow(control_datamatrix)), rep(1, nrow(diagnosed_datamatrix)))
   }
 
   output <- list(

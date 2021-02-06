@@ -29,7 +29,7 @@ efrons_rms_sample <- function(df, p = NULL){
 #' Calculate Efron's RMS Over A Correlation Matrix
 #' @param m a correlation matrix
 #' @param p the dimension of the matrix. defult null. if not null, conduct a bias correction.
-#' @seealso Bradley Efron. Large-scale inference: empirical Bayes methods for estimation, testing, and prediction, volume 1. Cambridge University Press, 2012.
+#' @references Bradley Efron. Large-scale inference: empirical Bayes methods for estimation, testing, and prediction, volume 1. Cambridge University Press, 2012.
 #' @inherit efron_bias_correction seealso
 #' @export
 efrons_rms <- function(m, p = NULL){

@@ -81,7 +81,7 @@ optimiser <- function(
     value = sum_of_squares(
       theta = temp_theta,
       alpha = temp_alpha,
-      diagnosed_dt = diagnosed_dt,
+      diagnosed_datamatrix = diagnosed_datamatrix,
       inv_sigma = weight_matrix_reg_inv,
       LinkFunc = LinkFunc,
       dim_alpha = dim_alpha,
@@ -97,8 +97,8 @@ optimiser <- function(
   for(i in 2:iter_config$max_loop){
     temp_theta <- theta_of_alpha(
       alpha = temp_alpha,
-      control_dt = control_dt,
-      diagnosed_dt = diagnosed_dt,
+      control_datamatrix = control_datamatrix,
+      diagnosed_datamatrix = diagnosed_datamatrix,
       LinkFunc = LinkFunc,
       d = dim_alpha)
 
@@ -131,7 +131,7 @@ optimiser <- function(
 
     # Stopping rule
     if('abstol' %in% names(iter_config)){
-      distance <- vect_norm(steps[[i]]$alpha - steps[[i-1]]$alpha)
+      distance <- vect_norm(steps[[i]]$alpha - steps[[i-1]]$alpha, sqrt = FALSE)
       distance_lower_than_threshold <-
         distance < iter_config$abstol
     } else {

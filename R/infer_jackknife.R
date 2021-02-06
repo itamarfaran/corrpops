@@ -1,4 +1,13 @@
-infer_jacknife <- function(results)
+#' Infer Jackknife Results
+#'
+#' Claculate the Jacknife Variance base on Jackknife Estimation
+#'
+#' @param results output object of \link[corrfuncs]{estimate_model_jacknife}
+#' @return list of estimates and variance matrix
+#'
+#' @export
+
+infer_jackknife <- function(results)
 {
   diagnosed_ind <- as.logical(results$is_diagnosed)
 

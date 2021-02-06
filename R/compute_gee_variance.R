@@ -49,22 +49,22 @@ compute_mu_alpha_jacobian <- function(group, alpha, control_dt, diagnosed_dt, d 
 #' @export
 #'
 compute_gee_variance <- function(mod,
-                                 control_dt, diagnosed_dt,
+                                 control_arr, diagnosed_arr,
                                  est_mu = TRUE, reg_lambda = 0, reg_p = 2)
 {
   inner <- function(group){
     p <- 0.5 + sqrt(1 + 8*ncol(data))/2
     d <- length(mod$alpha)/p
 
-    control_data <- convert_corr_array_to_data_matrix(control_dt)
-    diagnosed_data <- convert_corr_array_to_data_matrix(diagnosed_dt)
-    data <- if(group == 'control') control_data else diagnosed_data
+    control_datamatrix <- convert_corr_array_to_data_matrix(control_arr)
+    diagnosed_datamatrix <- convert_corr_array_to_data_matrix(diagnosed_arr)
+    data <- if(group == 'control') control_datamatrix else diagnosed_datamatrix
 
     jacobian <- compute_mu_alpha_jacobian(
       group = group,
       alpha = mod$alpha,
-      control_dt = control_data,
-      diagnosed_dt = diagnosed_data,
+      control_dt = control_datamatrix,
+      diagnosed_dt = diagnosed_datamatrix,
       d = d,
       LinkFunc = mod$LinkFunc)
 
