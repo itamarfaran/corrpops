@@ -29,7 +29,7 @@ compute_mu_alpha_jacobian <- function(group, alpha, control_datamatrix, diagnose
        return(out)
      }
    }
-  out <- jacobian(func = func, x = alpha)
+  out <- numDeriv::jacobian(func = func, x = alpha)
   return(out)
 }
 
@@ -53,12 +53,12 @@ compute_gee_variance <- function(mod,
                                  est_mu = TRUE, reg_lambda = 0, reg_p = 2)
 {
   inner <- function(group){
-    p <- 0.5 + sqrt(1 + 8*ncol(data))/2
-    d <- length(mod$alpha)/p
-
     control_datamatrix <- convert_corr_array_to_data_matrix(control_arr)
     diagnosed_datamatrix <- convert_corr_array_to_data_matrix(diagnosed_arr)
     data <- if(group == 'control') control_datamatrix else diagnosed_datamatrix
+
+    p <- 0.5 + sqrt(1 + 8*ncol(data))/2
+    d <- length(mod$alpha)/p
 
     jacobian <- compute_mu_alpha_jacobian(
       group = group,

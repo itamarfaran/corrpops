@@ -11,7 +11,8 @@
 #' @export
 
 corrmat_covariance <- function(matr, fisher_z = FALSE, nonpositive = c('stop', 'force', 'ignore'), use_cpp = TRUE){
-  nonpositive <- match.arg(nonpositive, c('stop', 'force', 'ignore'))
+  use_cpp <- FALSE  # todo: fix Rcpp function
+  nonpositive <- match.arg(nonpositive[1], c('stop', 'force', 'ignore'))
 
   if(fisher_z)
     matr <- (exp(2*matr) - 1)/(exp(2*matr) + 1)

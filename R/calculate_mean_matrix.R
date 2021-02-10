@@ -52,7 +52,7 @@ sum_matrix <- function(arr, index, constants, weights = FALSE)
   if(missing(index))
     index <- 1:dim_arr[3]
   if(missing(constants))
-    index <- rep(1, length(index))
+    constants <- rep(1, length(index))
   if(weights)
     constants <- constants/sum(constants)
 

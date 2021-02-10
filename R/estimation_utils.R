@@ -42,11 +42,11 @@ optimiser <- function(
   iter_config <- utils::modifyList(list(max_loop = 50, reltol = 1e-06, min_loop = 3), iter_config)
   optim_config <- utils::modifyList(list(method = "BFGS", reltol = 1e-06, log_optim = FALSE), optim_config)
 
-  p <- .5 * (1 + sqrt(1 + 8 * ncol(diagnosed_dt)))
+  p <- .5 * (1 + sqrt(1 + 8 * ncol(diagnosed_datamatrix)))
   m <- .5 * p * (p - 1)
 
   if(is.null(theta0))
-    theta0 <- colMeans(rbind(control_dt, diagnosed_dt))
+    theta0 <- colMeans(rbind(control_datamatrix, diagnosed_datamatrix))
   if(is.null(alpha0))
     alpha0 <- matrix(LinkFunc$null_value, nr = p, nc = dim_alpha)
 
@@ -106,7 +106,7 @@ optimiser <- function(
       par = temp_alpha,
       fn = sum_of_squares,
       theta = temp_theta,
-      diagnosed_dt = diagnosed_dt,
+      diagnosed_datamatrix = diagnosed_datamatrix,
       inv_sigma = weight_matrix_reg_inv,
       LinkFunc = LinkFunc,
       dim_alpha = dim_alpha,
