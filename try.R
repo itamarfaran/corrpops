@@ -1,6 +1,6 @@
 library(corrfuncs)
 
-data("tga_arrays")
+data('tga_arrays')
 
 dim_subset <- 1:18
 
@@ -9,10 +9,6 @@ diagnosed_subset <- tga_arrays$diagnosed[dim_subset, dim_subset, ]
 
 test_corr_mat(control_subset)
 test_corr_mat(diagnosed_subset)
-
-control_subset <- tga_matrices$control[, dim_subset]
-diagnosed_subset <- tga_matrices$diagnosed[, dim_subset]
-
 
 
 results <- estimate_model(

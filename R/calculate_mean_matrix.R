@@ -34,7 +34,7 @@ sum_vector <- function(matr, index, constants, weights = FALSE, by_row = TRUE)
 
 #' Sum Over Array's Matrices
 #'
-#' Sum pver array's matrices
+#' Sum over array's matrices
 #'
 #' @param arr array to sum over 3rd axis.
 #' @param index index of matrices to sum. default is to sum over all matrices.
