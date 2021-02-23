@@ -54,7 +54,7 @@ estimate_model <- function(
   cov_model <- optimiser(
     control_datamatrix = control_datamatrix, diagnosed_datamatrix = diagnosed_datamatrix,
     alpha0 = alpha0, theta0 = theta0,
-    weight_matrix = weight_matrix, LinkFunc = LinkFunc,
+    weight_matrix = weight_matrix, dim_alpha = dim_alpha, LinkFunc = LinkFunc,
     model_reg_config = model_reg_config, matrix_reg_config = matrix_reg_config,
     iter_config = cov_config$iter_config, optim_config = cov_config$optim_config,
     early_stop = early_stop, verbose = verbose[2]

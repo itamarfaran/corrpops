@@ -29,7 +29,7 @@ estimate_model_jacknife <- function(
   iid_config = list(iter_config = list(min_loop = 0)), cov_config = list(),
   return_gee = FALSE, jack_control = TRUE,
   bias_correction = FALSE, early_stop = FALSE,
-  verbose = FALSE, ncores = 1
+  verbose = TRUE, ncores = 1
 ){
   if(ncores > 1){
     if(verbose){
@@ -54,7 +54,7 @@ estimate_model_jacknife <- function(
       control_datamatrix_ <- control_datamatrix[-i,]
     }
 
-    weight_matrix <- corrmat_covariance_from_data_matrix(diagnosed_datamatrix_)
+    weight_matrix <- corrmat_covariance_from_datamatrix(diagnosed_datamatrix_)
     cov_model <- optimiser(
       control_datamatrix = control_datamatrix_, diagnosed_datamatrix = diagnosed_datamatrix_,
       alpha0 = alpha0, theta0 = theta0, dim_alpha = dim_alpha,
@@ -96,9 +96,9 @@ estimate_model_jacknife <- function(
   diagnosed_datamatrix <- convert_corr_array_to_data_matrix(diagnosed_arr)
 
   if(is.null(alpha0) | is.null(theta0)){
-    ini_model <- estimate_alpha(
-      control_datamatrix = control_datamatrix,
-      diagnosed_datamatrix = diagnosed_datamatrix,
+    ini_model <- estimate_model(
+      control_arr = control_datamatrix,
+      diagnosed_arr = diagnosed_datamatrix,
       dim_alpha = dim_alpha,
       LinkFunc = LinkFunc,
       model_reg_config = model_reg_config,
