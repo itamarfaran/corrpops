@@ -61,7 +61,7 @@ estimate_model <- function(
   )
 
   if(bias_correction)
-    cov_model$alpha <- cov_model$alpha - median(cov_model$alpha) + LinkFunc$null_value
+    cov_model$alpha <- cov_model$alpha - stats::median(cov_model$alpha) + LinkFunc$null_value
 
   return(cov_model)
 }

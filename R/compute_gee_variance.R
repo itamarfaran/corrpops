@@ -9,7 +9,7 @@
 #' @param control_datamatrix array of correlation matrices of control group, vectorized and organized in a data matrix
 #' @param diagnosed_datamatrix same as control_datamatrix but of the diagnosed group
 #' @param d the number of columns in alpha, default 1
-#' @param linkFunc the link funtion $g$ to use
+#' @param LinkFunc the link funtion $g$ to use
 #' @return the Jacobian matrix
 #'
 compute_mu_alpha_jacobian <- function(group, alpha, control_datamatrix, diagnosed_datamatrix, d = 1, LinkFunc)

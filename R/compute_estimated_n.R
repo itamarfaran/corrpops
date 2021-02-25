@@ -8,7 +8,7 @@ compute_estimated_n_raw <- function(est, theo, only_diag = FALSE)
     x <- triangle2vector(theo, diag = TRUE)
     y <- triangle2vector(est, diag = TRUE)
   }
-  out <- lm(x ~ 0 + y)$coef
+  out <- stats::lm(x ~ 0 + y)$coef
   return(out)
 }
 

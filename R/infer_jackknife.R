@@ -16,11 +16,11 @@ infer_jackknife <- function(obj)
 
   # estimate_d <- colMeans(obj$alpha[diagnosed_ind,])
   const_d <- (n_s - 1)^2 / n_s
-  var_d <- const_d * var(obj$alpha[diagnosed_ind,])
+  var_d <- const_d * stats::var(obj$alpha[diagnosed_ind,])
 
   # estimate_h <- colMeans(obj$alpha[!diagnosed_ind,])
   const_h <- (n_h - 1)^2 / n_h
-  var_h <- const_h * var(obj$alpha[!diagnosed_ind,])
+  var_h <- const_h * stats::var(obj$alpha[!diagnosed_ind,])
 
   # estimate <- (estimate_d + estimate_h)/2
   estimate <- colMeans(obj$alpha)

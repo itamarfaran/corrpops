@@ -15,7 +15,7 @@ central_moments <- function(x, exkurtosis = TRUE)
 
   n <- length(x)
   out[1] <- m <- mean(x)
-  out[2] <- v <- var(x)
+  out[2] <- v <- stats::var(x)
   s <- sqrt(v * (1 - 1/n))
   x_normalized <- (x - m)/s
 

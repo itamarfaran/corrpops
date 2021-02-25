@@ -11,7 +11,7 @@ create_correlation_matrices <- function(n, df, Sigma,
                                         ncores = 1)
   {
   out <- rWishart_ARMA(n, df, Sigma, AR = AR, MA = MA, random_effect = random_effect, ncores = ncores)
-  out <- lapply(1:n, function(b) force_symmetry(cov2cor(out[,,b])))
+  out <- lapply(1:n, function(b) force_symmetry(stats::cov2cor(out[,,b])))
   out <- simplify2array(out)
   return(out)
 }

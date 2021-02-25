@@ -37,10 +37,10 @@ optimiser <- function(
   if('reltol' %in% names(iter_config) & 'abstol' %in% names(iter_config))
     stop('can supply only one of reltol or abstol')
 
-  model_reg_config <- utils::modifyList(list(lambda = 0, lp = 2), model_reg_config)
-  matrix_reg_config <- utils::modifyList(list(method = 'constant', const = 0), matrix_reg_config)
-  iter_config <- utils::modifyList(list(max_loop = 50, reltol = 1e-06, min_loop = 3), iter_config)
-  optim_config <- utils::modifyList(list(method = "BFGS", reltol = 1e-06, log_optim = FALSE), optim_config)
+  model_reg_config <- utils::modifyList(default_model_reg_config, model_reg_config)
+  matrix_reg_config <- utils::modifyList(default_matrix_reg_config, matrix_reg_config)
+  iter_config <- utils::modifyList(default_iter_config, iter_config)
+  optim_config <- utils::modifyList(default_optim_config, optim_config)
 
   p <- .5 * (1 + sqrt(1 + 8 * ncol(diagnosed_datamatrix)))
   m <- .5 * p * (p - 1)
@@ -48,7 +48,7 @@ optimiser <- function(
   if(is.null(theta0))
     theta0 <- colMeans(rbind(control_datamatrix, diagnosed_datamatrix))
   if(is.null(alpha0))
-    alpha0 <- matrix(LinkFunc$null_value, nr = p, nc = dim_alpha)
+    alpha0 <- matrix(LinkFunc$null_value, nrow = p, ncol = dim_alpha)
 
   dim_alpha <- length(alpha0) / p
   if(dim_alpha %% 1 != 0)
@@ -102,7 +102,7 @@ optimiser <- function(
       LinkFunc = LinkFunc,
       d = dim_alpha)
 
-    optim_alpha <- optim(
+    optim_alpha <- stats::optim(
       par = temp_alpha,
       fn = sum_of_squares,
       theta = temp_theta,

@@ -65,7 +65,7 @@ estimate_model_jacknife <- function(
     )
 
     if(bias_correction)
-      cov_model$alpha <- cov_model$alpha - median(cov_model$alpha) + LinkFunc$null_value
+      cov_model$alpha <- cov_model$alpha - stats::median(cov_model$alpha) + LinkFunc$null_value
 
     gee_out <- NA
     if(return_gee){
@@ -80,7 +80,7 @@ estimate_model_jacknife <- function(
     out <- list(
       theta = cov_model$theta,
       alpha = cov_model$alpha,
-      convergence = tail(cov_model$convergence, 1),
+      convergence = utils::tail(cov_model$convergence, 1),
       gee_var = gee_out
     )
 

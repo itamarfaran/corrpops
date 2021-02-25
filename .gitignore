@@ -41,6 +41,7 @@ vignettes/*.pdf
 #.Rbuildignore
 
 .idea
+man  # todo: drop when finish documenting
 
 *.o
 *.dll

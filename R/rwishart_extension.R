@@ -15,7 +15,7 @@ generate_random_effect_sigma <- function(Sigma, random_effect = NULL)
 
   p <- ncol(Sigma)
   p <- p * (1 + 1/random_effect)
-  out <- rWishart(1, p, Sigma)[,,1]/p
+  out <- stats::rWishart(1, p, Sigma)[,,1]/p
 
   return(out)
 }
@@ -42,7 +42,7 @@ rWishart2 <- function(n = 1, df, Sigma, random_effect = NULL)
   p <- ncol(Sigma)
 
   if(df >= p & is.null(random_effect) & matrixcalc::is.positive.definite(Sigma))
-    return(rWishart(n, df, Sigma))
+    return(stats::rWishart(n, df, Sigma))
   if(df < p)
     warning('Wishart degrees of freedom lower than matrix dimension')
 
