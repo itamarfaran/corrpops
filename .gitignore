@@ -44,4 +44,5 @@ vignettes/*.pdf
 man  # todo: drop when finish documenting
 
 *.o
+*.so
 *.dll
