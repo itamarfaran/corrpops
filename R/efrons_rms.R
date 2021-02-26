@@ -1,7 +1,7 @@
 #' Bias Correction of Efron's RMS
 #' @param rms the RMS factor
 #' @param p the dimension of the matrix
-#' @inherit efrons_rms seealso
+#' @family efron_rms
 #' @export
 efron_bias_correction <- function(rms, p){
   rms <- sqrt(p/(p - 1) * (rms ^ 2 - 1/(p - 1)))
@@ -13,7 +13,7 @@ efron_bias_correction <- function(rms, p){
 #' Calculate the average Efron's RMS over a sample of corraltion matrices
 #' @param arr an array of correlation matrices (can be in data matrix-form)
 #' @param p the dimension of the matrix
-#' @inherit efrons_rms seealso
+#' @family efron_rms
 #' @export
 efrons_rms_sample <- function(arr, p = NULL){
   arr <- convert_corr_array_to_data_matrix(arr)
@@ -30,7 +30,7 @@ efrons_rms_sample <- function(arr, p = NULL){
 #' @param m a correlation matrix
 #' @param p the dimension of the matrix. defult null. if not null, conduct a bias correction.
 #' @references Bradley Efron. Large-scale inference: empirical Bayes methods for estimation, testing, and prediction, volume 1. Cambridge University Press, 2012.
-#' @inherit efron_bias_correction seealso
+#' @family efron_rms
 #' @export
 efrons_rms <- function(m, p = NULL){
   if(ncol(m) != nrow(m))
@@ -52,7 +52,7 @@ efrons_rms <- function(m, p = NULL){
 #' Estimate the Effective Sample Size, reduced due to cross-row correlation.
 #' @param n the number of ovservations
 #' @param rms Efron's Root Mean Square coefficient.
-#' @inherit efron_bias_correction seealso
+#' @family efron_rms
 #' @export
 efrons_effective_sample_size <- function(n, rms){
   out <- n/(1 + (n - 1) * rms^2)
