@@ -9,6 +9,7 @@
 #' @param diag if true, vectorize (or construct) the diagonal of the matrix as well
 #' @param diag_value if diag is set to false, what value to place on the diagonal. default is NA, for correlation matrices set to 1.
 #' @return the transformed matrix / vector
+#' @family vectriangle
 #' @export
 #'
 triangle2vector <- function(matr, diag = FALSE){
@@ -22,6 +23,7 @@ triangle2vector <- function(matr, diag = FALSE){
 
 
 #' @describeIn triangle2vector inverse of triangle2vector
+#' @family vectriangle
 #' @export
 vector2triangle <- function(vect, diag = FALSE, diag_value = NA){
   m <- length(vect)
