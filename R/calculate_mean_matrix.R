@@ -1,13 +1,14 @@
 #' Sum Over Matrix Rows / Columns
 #'
-#' Sum over matrix rows / columns
+#' Sum over specified matrix rows / columns, possibly weighted. Useful for creating multivariate ARMA processes.
 #'
+#' @family sum_arrays
 #' @param matr matrix to sum over rows / columns
 #' @param index index of rows / columns to sum. default is to sum over all rows.
 #' @param constants constants to multiply the indices before summation. default is 1 for all constants
-#' @param weights should treat constants as weights (sum of all constants = 1)? default false
+#' @param weights should treat constants as weights? if true, weights <- weights/sum(weights). default false
 #' @param by_row should sum over rows (default) or by columns?
-#' @return a vector
+#' @return a vector, built from the (possible weighted) sum of specified vectors
 #'
 #' @export
 #'
@@ -34,13 +35,14 @@ sum_vector <- function(matr, index, constants, weights = FALSE, by_row = TRUE)
 
 #' Sum Over Array's Matrices
 #'
-#' Sum over array's matrices
+#' Sum over specified Array matrices, possibly weighted.
 #'
-#' @param arr array to sum over 3rd axis.
+#' @family sum_arrays
+#' @param arr array to sum over it's 3rd axis.
 #' @param index index of matrices to sum. default is to sum over all matrices.
 #' @param constants constants to multiply the matrices before summation. default is 1 for all constants
 #' @param weights should treat constants as weights (sum of all constants = 1)? default false
-#' @return a matrix
+#' @return a matrix, built from the (possible weighted) sum of specified matrices
 #'
 #' @export
 #'
@@ -65,8 +67,9 @@ sum_matrix <- function(arr, index, constants, weights = FALSE)
 
 #' Calculate Mean Matrix of an Array
 #'
-#' Calculate mean matrix of an array
+#' Wrapper around sum_matrix to calculate mean matrix of an array. Runs sum_matrix with default values for index, constants and weights=TRUE.
 #'
+#' @family sum_arrays
 #' @param arr array to sum over 3rd axis.
 #' @return averaged matrix
 #'

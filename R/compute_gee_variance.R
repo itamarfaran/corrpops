@@ -42,14 +42,14 @@ compute_mu_alpha_jacobian <- function(group, alpha, control_datamatrix, diagnose
 
 #' Compute Estimates' Variance Using a GEE Framework
 #'
-#' Estimate the estimators' variance using a Generelized Estimation Equations framwork
+#' Estimate the estimators' variance using a Generalized Estimation Equations framework
 #'
 #' @param mod an object created by \link[corrfuncs]{estimate_model}
 #' @param control_arr array of correlation matrices of control group. can be passed as a matrix, each row is a vectorized correlation matrix
 #' @param diagnosed_arr same as control_arr but of the diagnosed group
 #' @param est_mu whether to use the expected value estimated in the model or the sample average. default TRUE.
 #' @return the Fisher information matrix of alpha
-#' @seealso \link[corrfuncs]{estimate_model} \link[corrfuncs] {convert_corr_array_to_data_matrix}
+#' @seealso \link[corrfuncs]{estimate_model} \link[corrfuncs]{convert_corr_array_to_data_matrix}
 #'
 #' @export
 #'

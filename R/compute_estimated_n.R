@@ -22,7 +22,7 @@ compute_estimated_n_raw <- function(est, theo, only_diag = FALSE)
 #' @param est the empirical covariance matrix, \eqn{n^{-1}\left(Y-\hat{\mu}\right)\left(Y-\hat{\mu}\right)^{t}}
 #' @param theo the theoretical covariance matrix
 #' @param only_diag logical, whether to use only the diagonal (variances) or the whole matrix. Default FALSE
-#' @return numeric, the estimated degrees of freedom
+#' @return the result of the projection of theo ~ est
 compute_estimated_n <- function(obj, only_diag = TRUE)
 {
   datamatrix <- convert_corr_array_to_data_matrix(obj)

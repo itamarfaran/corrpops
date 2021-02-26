@@ -1,10 +1,10 @@
 #' Calculate Central Moments
 #'
-#' Calculate the sample Mean, Variance, Skewness and Kurtosis
+#' Calculate the unbiased estimates of a (univariate) sample's Mean, Variance, Skewness and Kurtosis
 #'
-#' @param x numeric vector
-#' @param exkurtosis logical, whther to caculate the ex-kurtosis or kurtosis. default True
-#' @return named numeric vector of length 4
+#' @param x a numeric vector
+#' @param exkurtosis if true, calculates the ex-kurtosis instead of the kurtosis (subtract 3 from the kurtosis, to ensure the kurtosis of a Gaussian RV is 0). default True
+#' @return a named numeric vector consisting of the estimates for the first four centralized moments.
 #'
 #' @export
 #'
