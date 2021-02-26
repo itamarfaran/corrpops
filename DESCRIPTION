@@ -1,12 +1,12 @@
 Package: corrfuncs
-Title: What the Package Does (One Line, Title Case)
+Title: Analysis of two populations of correlation matrices
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Itamar",
            family = "Faran",
            role = c("aut", "cre"),
            email = "itamar.faran@gmail.com")
-Description: What the package does (one paragraph).
+Description: Analysis of two populations of correlation matrices, according to the paper "Parsimonious Model for Detecting Differences Between Correlation-Matrix Populations, with Application to Resting State fMRI".
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

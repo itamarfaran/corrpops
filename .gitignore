@@ -40,9 +40,13 @@ vignettes/*.pdf
 .Rproj.user
 #.Rbuildignore
 
+# directories
 .idea
-man  # todo: drop when finish documenting
+man
+data
+# todo: drop data, man when finish documenting
 
+# rcpp build files
 *.o
 *.so
 *.dll

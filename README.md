@@ -1,1 +1,1 @@
-# corr_funcs
+# corrfuncs
