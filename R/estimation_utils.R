@@ -184,6 +184,7 @@ optimiser <- function(
     theta = temp_theta,
     alpha = temp_alpha,
     LinkFunc = LinkFunc,
+    model_reg_config = model_reg_config,
     vcov = weight_matrix_reg_inv,
     convergence = convergence,
     steps = steps, log_optim = log_optim_out

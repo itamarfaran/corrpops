@@ -1,6 +1,6 @@
-#' Compute the Jacobian by Alpha parameter
+#' Compute the Jacobian of the link function by Alpha parameter
 #'
-#' Helper function to calulcate the Jacobian of the expected value by Alpha:
+#' Helper function to calculate the Jacobian of the expected value by Alpha:
 #' \eqn{J_{\alpha}\left(g\left(\Theta,\alpha\right)\right)_{ij}=
 #' \frac{\partial g_{i}\left(\Theta,\alpha\right)}{\partial\alpha_{j}}}
 #'
@@ -9,23 +9,29 @@
 #' @param control_datamatrix array of correlation matrices of control group, vectorized and organized in a data matrix
 #' @param diagnosed_datamatrix same as control_datamatrix but of the diagnosed group
 #' @param d the number of columns in alpha, default 1
-#' @param LinkFunc the link funtion $g$ to use
+#' @param LinkFunc the link function $g$ to use
 #' @return the Jacobian matrix
 #'
 compute_mu_alpha_jacobian <- function(group, alpha, control_datamatrix, diagnosed_datamatrix, d = 1, LinkFunc)
 {
    if(group == 'diagnosed'){
      func <- function(A){
-       out <- triangle2vector(LinkFunc$func(
-         t = theta_of_alpha(A, control_datamatrix, diagnosed_datamatrix, LinkFunc = LinkFunc, d = d),
-         a = A,
-         d = d
-       ))
+       theta <- theta_of_alpha(A, control_datamatrix, diagnosed_datamatrix, LinkFunc = LinkFunc, d = d)
+
+       out <- triangle2vector(
+         LinkFunc$func(
+           t = theta,
+           a = A,
+           d = d
+           )
+         )
        return(out)
      }
    } else if(group == 'control'){
      func <- function(A){
-       out <- theta_of_alpha(A, control_datamatrix, diagnosed_datamatrix, LinkFunc = LinkFunc, d = d)
+       theta <- theta_of_alpha(A, control_datamatrix, diagnosed_datamatrix, LinkFunc = LinkFunc, d = d)
+
+       out <- theta
        return(out)
      }
    }
@@ -42,16 +48,13 @@ compute_mu_alpha_jacobian <- function(group, alpha, control_datamatrix, diagnose
 #' @param control_arr array of correlation matrices of control group. can be passed as a matrix, each row is a vectorized correlation matrix
 #' @param diagnosed_arr same as control_arr but of the diagnosed group
 #' @param est_mu whether to use the expected value estimated in the model or the sample average. default TRUE.
-#' @param reg_lambda todo: drop, should inherit from mod
-#' @param reg_p todo: drop, should inherit from mod
-#' @return fisher information matrix of alpha
+#' @return the Fisher information matrix of alpha
+#' @seealso \link[corrfuncs]{estimate_model} \link[corrfuncs] {convert_corr_array_to_data_matrix}
 #'
 #' @export
 #'
-compute_gee_variance <- function(mod,
-                                 control_arr, diagnosed_arr,
-                                 est_mu = TRUE, reg_lambda = 0, reg_p = 2)
-{
+compute_gee_variance <- function(mod, control_arr, diagnosed_arr, est_mu = TRUE)
+  {
   inner <- function(group){
     control_datamatrix <- convert_corr_array_to_data_matrix(control_arr)
     diagnosed_datamatrix <- convert_corr_array_to_data_matrix(diagnosed_arr)
@@ -110,6 +113,9 @@ compute_gee_variance <- function(mod,
     out <- out * nrow(lst$data)
     return(out)
   }
+
+  reg_lambda <- mod$model_reg_config$lambda
+  reg_p <- mod$model_reg_config$lp
 
   control_lst <- inner('control')
   diagnosed_lst <- inner('diagnosed')
