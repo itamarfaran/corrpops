@@ -2,9 +2,7 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//' @describeIn corrcalc_r
-//' @inheritParams corrcalc_r
-//' @family corrcalc
+//' @describeIn corrcalc_r c++ application of corrcalc_r
 // [[Rcpp::export]]
 NumericMatrix corrcalc_c(NumericMatrix matr, int m,
                          NumericVector order_vecti,
