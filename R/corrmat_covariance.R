@@ -2,12 +2,12 @@
 #'
 #' Calculate the covariance matrix of a correlation matrix. The matrix can be in vectorized form.
 #'
-#' @param matr the correlation matrix. can be vectorized.
-#' @param fisher_z if true, calculate the covariance matrix of a fisher-Z transformed correlation matrix. It is assumed that the correlations are Fisher transformed, and the matrix will under go the Inverse Fisher Transformation.
-#' @param nonpositive error handling when matrix with not positive definite. can be one of 'stop', 'force', 'ignore'. if 'force' is chosen, \link[Matrix]{nearPD} will be used.
+#' @param matr the correlation matrix. can be vectorized from \link[corrfuncs]{triangle2vector}
+#' @param fisher_z if true, calculate the covariance matrix of a fisher-Z transformed correlation matrix. It is assumed that the correlations are already Fisher transformed, and the matrix will under go the Inverse Fisher Transformation.
+#' @param nonpositive error handling when matrix is not positive definite. can be one of 'stop', 'force', 'ignore'. if 'force' is chosen, \link[Matrix]{nearPD} will be used.
 #' @param use_cpp whether to use c++ source code. default true.
 #' @return the covariance matrix
-#' @seealso \link[corrfuncs]{corrmat_covariance_from_datamatrix}
+#' @family corrcalc
 #' @export
 
 corrmat_covariance <- function(matr, fisher_z = FALSE, nonpositive = c('stop', 'force', 'ignore'), use_cpp = TRUE){
@@ -54,23 +54,25 @@ corrmat_covariance <- function(matr, fisher_z = FALSE, nonpositive = c('stop', '
 #' Calculate the average covariance matrix of multiple correlation matrices.
 #'
 #' @param datamatrix the sample of correlation matrices. can be an array of matrices, or a matrix of vectorized correlation matrices.
-#' @param fisher_z if true, calculate the covariance matrix of a fisher-Z transformed correlation matrix. It is assumed that the correlations are Fisher transformed, and the matrix will under go the Inverse Fisher Transformation.
+#' @param fisher_z if true, calculate the covariance matrix of a fisher-Z transformed correlation matrix. It is assumed that the correlations are already Fisher transformed, and the matrix will under go the Inverse Fisher Transformation.
 #' @param est_n whether to divide the covariance matrix by the estimated degrees of freedom, with a linear projection.
 #' @param only_diag passed to \link[corrfuncs]{compute_estimated_n}
-#' @param nonpositive error handling when matrix with not positive definite. can be one of 'stop', 'force', 'ignore'. if 'force' is chosen, \link[Matrix]{nearPD} will be used.
+#' @param nonpositive error handling when matrix is not positive definite. can be one of 'stop', 'force', 'ignore'. if 'force' is chosen, \link[Matrix]{nearPD} will be used.
 #' @param use_cpp whether to use c++ source code. default true.
 #' @param ncores number of cores to use, if parallelization is in use.
 #' @return the averaged covariance matrix
-#' @seealso \link[corrfuncs]{corrmat_covariance}
+#' @family corrcalc
 #' @export
 corrmat_covariance_from_datamatrix <- function(datamatrix, fisher_z = FALSE,
                                        est_n = FALSE, only_diag = TRUE,
                                        nonpositive = c('ignore', 'stop', 'force'),
                                        use_cpp = TRUE, ncores = 1){
 
-  datamatrix <- convert_corr_array_to_data_matrix(datamatrix)
-  index <- seq_len(nrow(datamatrix))
-  func <- function(i) corrmat_covariance(datamatrix[i,], fisher_z = fisher_z, nonpositive = nonpositive, use_cpp = use_cpp)
+  arr <- convert_data_matrix_to_corr_array(datamatrix)
+  matr <- convert_corr_array_to_data_matrix(datamatrix)
+
+  index <- seq_len(nrow(matr))
+  func <- function(i) corrmat_covariance(arr[,,i], fisher_z = fisher_z, nonpositive = nonpositive, use_cpp = use_cpp)
 
   if(ncores > 1){
     covariances <- parallel::mclapply(index, func, mc.cores = ncores)
@@ -81,7 +83,7 @@ corrmat_covariance_from_datamatrix <- function(datamatrix, fisher_z = FALSE,
   sigma <- calculate_mean_matrix(simplify2array(covariances))
 
   if(est_n){
-    est <- t(datamatrix) %*% datamatrix / nrow(datamatrix)
+    est <- t(matr) %*% matr / nrow(matr)
     estimated_n <- compute_estimated_n_raw(est = est, theo = sigma, only_diag = only_diag)
     sigma <- sigma/estimated_n
   }

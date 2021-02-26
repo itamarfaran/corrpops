@@ -2,8 +2,9 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-// todo: reference to corrcalc_r
-
+//' @describeIn corrcalc_r
+//' @inheritParams corrcalc_r
+//' @family corrcalc
 // [[Rcpp::export]]
 NumericMatrix corrcalc_c(NumericMatrix matr, int m,
                          NumericVector order_vecti,
