@@ -16,7 +16,7 @@ sum_of_squares <- function(
   sse <- nrow(diagnosed_datamatrix) * t(g11) %*% inv_sigma %*% ( 0.5 * g11 - colMeans(diagnosed_datamatrix) )
 
   if(reg_lambda > 0)
-    sse <- sse + reg_lambda*sum((alpha - LinkFunc$null_value)^reg_p)
+    sse <- sse + reg_lambda * sum(abs(alpha - LinkFunc$null_value)^reg_p) ^ (1/reg_p)
 
   return(sse)
 }
@@ -37,10 +37,10 @@ optimiser <- function(
   if('reltol' %in% names(iter_config) & 'abstol' %in% names(iter_config))
     stop('can supply only one of reltol or abstol')
 
-  model_reg_config <- utils::modifyList(default_model_reg_config, model_reg_config)
-  matrix_reg_config <- utils::modifyList(default_matrix_reg_config, matrix_reg_config)
-  iter_config <- utils::modifyList(default_iter_config, iter_config)
-  optim_config <- utils::modifyList(default_optim_config, optim_config)
+  model_reg_config <- utils::modifyList(configs$model_reg, model_reg_config)
+  matrix_reg_config <- utils::modifyList(configs$matrix_reg, matrix_reg_config)
+  iter_config <- utils::modifyList(configs$iterations, iter_config)
+  optim_config <- utils::modifyList(configs$optim, optim_config)
 
   p <- .5 * (1 + sqrt(1 + 8 * ncol(diagnosed_datamatrix)))
   m <- .5 * p * (p - 1)
@@ -94,7 +94,7 @@ optimiser <- function(
   if(verbose)
     message(paste0("Time of intialization: ", start_time, "; Progress: 'Loop, (Time, Convergence, Distance)'"))
 
-  for(i in 2:iter_config$max_loop){
+  for(i in 2:iter_config$maxit){
     temp_theta <- theta_of_alpha(
       alpha = temp_alpha,
       control_datamatrix = control_datamatrix,
@@ -144,8 +144,8 @@ optimiser <- function(
       cat(get_update_message(i, start_time, steps[[i]]$convergence, distance))
 
     stopping_condition <- FALSE
-    if(i > iter_config$min_loop){
-      look_back <- iter_config$min_loop - 1
+    if(i > iter_config$minit){
+      look_back <- iter_config$minit - 1
       index <- if(look_back > 0) i - 0:look_back else i
       stopping_condition <- distance_lower_than_threshold & (sum(convergence[index]) == 0)
     }
@@ -170,7 +170,7 @@ optimiser <- function(
       break()
   }
 
-  if(i == iter_config$max_loop)
+  if(i == iter_config$maxit)
     warning('optimization reached maximum iterations')
 
   if(verbose){
@@ -184,10 +184,11 @@ optimiser <- function(
     theta = temp_theta,
     alpha = temp_alpha,
     LinkFunc = LinkFunc,
-    model_reg_config = model_reg_config,
+    regularization = model_reg_config,
     vcov = weight_matrix_reg_inv,
     convergence = convergence,
-    steps = steps, log_optim = log_optim_out
+    steps = steps,
+    log_optim = log_optim_out
   )
 
   return(output)

@@ -114,8 +114,8 @@ compute_gee_variance <- function(mod, control_arr, diagnosed_arr, est_mu = TRUE)
     return(out)
   }
 
-  reg_lambda <- mod$model_reg_config$lambda
-  reg_p <- mod$model_reg_config$lp
+  reg_lambda <- mod$regularization$lambda
+  reg_p <- mod$regularization$lp
 
   control_lst <- inner('control')
   diagnosed_lst <- inner('diagnosed')

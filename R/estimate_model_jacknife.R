@@ -7,26 +7,34 @@
 #' @param dim_alpha the number of columns in alpha. default 1
 #' @param alpha0 starting point for alpha in the optimization. if null (the default), will use LinkFunc$null_value
 #' @param theta0 starting point for alpha in the optimization. if null (the default), will the average matrix of all subjects
-#' @param LinkFunc a list of function. must include func, inverse, rev_func and null_value. @seealso LinkFunc
-#' @param model_reg_config list of configurations for the model regularization seealso
-#' @param matrix_reg_config list of configurations for the covariance matrix's regularization seealso
-#' @param iid_config list of configurations for the optimization of the model with identity matrix covariance matrix seealso
-#' @param cov_config list of configurations for the optimization of the model with specified covariance matrix seealso
+#' @param LinkFunc a list of function. must include func, inverse, rev_func and null_value. see \link[corrfuncs]{LinkFuncSkeleton}
+#' @param model_reg_config see \link[corrfuncs]{configurations}. arguments passed will override the defaults.
+#' @param matrix_reg_config see \link[corrfuncs]{configurations}. arguments passed will override the defaults.
+#' @param iid_config list of two lists named 'iter_config' and 'optim_config', for the optimization of the model with identity matrix covariance matrix. see \link[corrfuncs]{configurations}. arguments passed will override the defaults.
+#' @param cov_config list of two lists named 'iter_config' and 'optim_config', for the optimization of the model with a specified covariance matrix. see \link[corrfuncs]{configurations}. arguments passed will override the defaults.
 #' @param return_gee if true, calculate the gee estimate of variance in each jackknife
 #' @param jack_control if false, don't jackknife control subjects
 #' @param bias_correction if true, correct the estimates to the median: a' = a - med(a) + null_value
 #' @param early_stop if true, stop the optimization of the joint loss function (of theta and alpha) didn't decrease.
+#' @param early_stop if true, stop the optimization of the joint loss function (of theta and alpha) didn't decrease in the last iteration.
 #' @param verbose if true, print status to console
 #' @param ncores number of cores to use in parallel
-#' @return a list of todo
-#'
+#' @return a list of the following:
+#' @return - theta: a matrix, the estimates of theta from each jackknife iteration vectorized
+#' @return - alpha: a matrix, the estimates of alpha from each jackknife iteration vectorized
+#' @return - gee_var: if return_gee=TRUE, an array of the gee estimate of variance from each jackknife iteration
+#' @return - convergence: a matrix consisting of vectors with the convergence in each iteration. see \link[stats]{optim}
+#' @return - is_diagnosed: a vector with 0,1 indicating of a control or diagnosed subjet was omitted in the iteration
+#' @return - LinkFunc: the link function used same as the parameter LinkFunc
+#' @return - regularization: the same as model_reg_config parameter
+#' @seealso \link[corrfuncs]{estimate_model}
 #' @export
 #'
 estimate_model_jacknife <- function(
   control_arr, diagnosed_arr, dim_alpha = 1, alpha0 = NULL, theta0 = NULL,
   LinkFunc = LinkFunctions$multiplicative_identity,
   model_reg_config = list(), matrix_reg_config = list(),
-  iid_config = list(iter_config = list(min_loop = 0)), cov_config = list(),
+  iid_config = list(iter_config = list(minit = 0)), cov_config = list(),
   return_gee = FALSE, jack_control = TRUE,
   bias_correction = FALSE, early_stop = FALSE,
   verbose = TRUE, ncores = 1
@@ -168,7 +176,8 @@ estimate_model_jacknife <- function(
     gee_var = gee_var,
     convergence = convergence,
     is_diagnosed = is_diagnosed,
-    LinkFunc = LinkFunc
+    LinkFunc = LinkFunc,
+    regularization = model_reg_config
   )
 
   return(output)
