@@ -1,13 +1,14 @@
 #' Skeleton of Link Function
 #'
-#' Skeleton of link function consumed by \link[corrfuncs]{estimate_model}
-#' @param name optional, a string specifing the link function's name
-#' @param func a function with input t (theta), a vectorized correlation matrix, a (alpha) and d, the number of columns in alpha. the output would be a correlation matrix with alpha effect
-#' @param inverse a function with input a, that inverts alpha. for example, of we specify func to calculate exp(a), inverse would be log(a)
-#' @param rev_func a function with input datamatrix, a vectorized array of correlation matrices, a (alpha) and d, the number of columns in alpha. the output would be the array with the alpha effect reversed
-#' @param null_value the null value of the link function
+#' Skeleton of link function consumed by \link[corrfuncs]{estimate_model}.
+#' must have the following elements:
+#' - name: optional, a string specifing the link function's name
+#' - func: a function with input t (theta), a vectorized correlation matrix, a (alpha) and d, the number of columns in alpha. the output would be a correlation matrix with alpha effect
+#' - inverse: a function with input a, that inverts alpha. for example, of we specify func to calculate exp(a), inverse would be log(a)
+#' - rev_func: a function with input datamatrix, a vectorized array of correlation matrices, a (alpha) and d, the number of columns in alpha. the output would be the array with the alpha effect reversed
+#' - null_value: the null value of the link function
 #'
-LinkFunc <- list(
+LinkFuncSkeleton <- list(
   name = NA,
   func = function(t, a, d) NA,
   inverse = function(a) NA,
@@ -60,7 +61,7 @@ additive_quotent <- list(
 
 
 #' Default Link Functions for model
-#' @seealso \link[corrfuncs]{LinkFunc}
+#' @seealso \link[corrfuncs]{LinkFuncSkeleton}
 #' @export
 LinkFunctions <- list(
   multiplicative_identity = multiplicative_identity,

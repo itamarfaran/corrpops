@@ -40,6 +40,7 @@ sqrt_diag <- function(x) return(sqrt(diag(x)))
 #' Force a Matrix to be Symmetrical
 #'
 #' Force a matrix to be symmetrical by averaging between the matrix and it's transpose
+#' @param matr the matrix to enforce symmetry
 #' @export
 force_symmetry <- function(matr) return(0.5 * (t(matr) + matr))
 

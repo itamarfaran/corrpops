@@ -11,13 +11,13 @@ efron_bias_correction <- function(rms, p){
 
 #' Calculate the Average Efron's RMS
 #' Calculate the average Efron's RMS over a sample of corraltion matrices
-#' @param rms the RMS factor
+#' @param arr an array of correlation matrices (can be in data matrix-form)
 #' @param p the dimension of the matrix
 #' @inherit efrons_rms seealso
 #' @export
-efrons_rms_sample <- function(df, p = NULL){
-  df <- convert_corr_array_to_data_matrix(df)
-  rms_mean <- mean(sqrt(rowMeans(df^2)))
+efrons_rms_sample <- function(arr, p = NULL){
+  arr <- convert_corr_array_to_data_matrix(arr)
+  rms_mean <- mean(sqrt(rowMeans(arr^2)))
 
   if(!is.null(p))
     rms_mean <- efron_bias_correction(rms_mean)

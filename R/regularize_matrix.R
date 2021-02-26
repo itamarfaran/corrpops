@@ -3,6 +3,7 @@
 #' Regularize a square matrix by increasing it's diagonal
 #' @param matr the matrix to be regularized
 #' @param const the constant
+#' @param method how to regularize the matrix. can be one of 'constant', 'avg_diag', 'increase_diag'. see details for more information.
 #' @param only_if_singular if true, will regularize only if the matrix is singular
 #' @return if method = 'constant', will add the constant to the diagonal. if method = 'avg_diag', will calculate a weighted average of the original matrix and an identity matrix multiplied by the avregae value of the diagonal, with weights 1 - const and const. if method = 'avg_diag', will calculate a weighted average of the original matrix and the diagonal of the matrix, with weights 1 - const and const
 #'

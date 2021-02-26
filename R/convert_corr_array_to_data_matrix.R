@@ -9,6 +9,7 @@ convert_corr_array_to_data_matrix_raw <- function(arr) t(apply(arr, 3, triangle2
 #' @seealso \link[corrfuncs]{triangle2vector}
 #'
 #' @param arr An array of square, symmetrical matrices or a data matrix of such form.
+#' @param verbose should add messages?
 #' @return Matrix with vectorized matrices as rows
 #' @export
 convert_corr_array_to_data_matrix <- function(arr, verbose = FALSE)
