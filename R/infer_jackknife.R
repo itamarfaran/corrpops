@@ -1,9 +1,11 @@
 #' Infer Jackknife Results
 #'
-#' Claculate the Jacknife Variance base on Jackknife Estimation
+#' Calculate the Jackknife Variance based on Jackknife Estimation
 #'
 #' @param obj output object of \link[corrfuncs]{estimate_model_jacknife}
-#' @return list of estimates and variance matrix
+#' @return a list consisting of estimates and variance matrix
+#' @return - estimate: Jacknife estimate of alpha (average estimate over all jackknife iterations)
+#' @return - variance: Jacknife estimate of the variance matrix
 #'
 #' @export
 

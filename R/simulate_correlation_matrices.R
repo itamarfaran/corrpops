@@ -1,6 +1,6 @@
 #' Simulate a Sample of Correlation Matrices
 #'
-#'
+#' will call \link[corrfuncs]{rWishart_ARMA}. before returning the array, will apply \link[stats]{cov2cor} on each matrix.
 #' @inheritParams rWishart_ARMA
 #' @return an array of correlation matrices.
 #' @export

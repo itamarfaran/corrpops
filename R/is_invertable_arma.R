@@ -1,11 +1,11 @@
 #' Check Invertibility/Stationarity of an AR/MA Process
 #'
-#'  Check if an AR proccess is stationary, or an MA process is invertable,
-#'  by ...
+#'  Check if an AR process is stationary or an MA process is invertible,
+#'  by testing if the polynomial defined by it's coefficients doesn't have a root between -1 and 1
 #'
-#' @param coefs the AR (or MA) coefficients. numeric vector
-#' @param tol the tolerance to check the ...
-#' @return logical
+#' @param coefs a numeric vector with the AR (or MA) coefficients
+#' @param tol the tolerance search for the roots.
+#' @return true if the process is invertible/stationary.
 #'
 #' @export
 is_invertable_arma <- function(coefs, tol = 1e-03)

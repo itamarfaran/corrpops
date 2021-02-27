@@ -13,10 +13,10 @@ remove_zeros <- function(x, rem = 0, rep = 1){
 
 #' Raise a Square Matrix to a Non-Integer Power
 #'
-#' Raise a Square Matrix to a non-integer power using it's eigen decomposition
+#' Raise a Square Matrix to a non-integer power using it's Spectral Decomposition
 #' @param x a square matrix
-#' @param power a real number
-#' @return the matrix raised to the power of power
+#' @param power a real
+#' @return the matrix raised to the power
 #' @export
 matrix_power <- function(x, power){
   eig <- eigen(x)
