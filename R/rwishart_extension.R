@@ -3,19 +3,20 @@
 #' Generate a Covariance matrix with expected value Sigma, and a random effect controlled by random_effect parameter
 #'
 #' @param Sigma Expected value of the covariance matrix
-#' @param random_effect the control on the random effect size. for 0 < random_effect < inf, a covariance matrix with distribution Wishart(Sigma, q)/q is generated with q = p * (1 + 1/random_effect), so a larger effect size means a larger variance in the results.
+#' @param random_effect the control on the random effect size. for 0 < random_effect <= Inf, a covariance matrix with distribution Wishart(Sigma, q)/q is generated with q = p * (1 + 1/random_effect), so a larger random_effect size means a larger variance in the results.
+#' @family rWishart2
 #' @return a covariance matrix with Expected value Sigma and variance roughly proportional to random_effect
 #' @export
 generate_random_effect_sigma <- function(Sigma, random_effect = NULL)
 {
   if(is.null(random_effect))
     return(Sigma)
-  if(random_effect < 0)
+  if(random_effect <= 0)
     stop('random_effect must be larger than 0')
 
   p <- ncol(Sigma)
   p <- p * (1 + 1/random_effect)
-  out <- stats::rWishart(1, p, Sigma)[,,1]/p
+  suppressWarnings({out <- rWishart2(1, p, Sigma, random_effect = NULL)[,,1]/p})
 
   return(out)
 }
@@ -23,8 +24,8 @@ generate_random_effect_sigma <- function(Sigma, random_effect = NULL)
 
 #' Random Wishart Distributed Matrices with df < p
 #'
-#' Generate n random matrices, distributed according to the (possibly degenerate) Wishart distribution with parameters Sigma and df, W_p(Sigma, df),
-#' with df possibly lower than p, Sigma can be semi positive definite and a random effect
+#' Generate n random matrices, distributed according to the (possibly degenerate) Wishart distribution with parameters Sigma and df, W_p(Sigma, df).
+#' with df possibly lower than p, Sigma can be semi positive definite and with a random effect.
 #' if df >= p, random_effect is null and Sigma is positive definite, will call \link[stats]{rWishart}.
 #'
 #' @param n integer sample size.
@@ -32,12 +33,11 @@ generate_random_effect_sigma <- function(Sigma, random_effect = NULL)
 #' @param Sigma semi positive definite (p * p) “scale” matrix, the matrix parameter of the distribution.
 #' @param random_effect generate a random effect for each matrix with \link[corrfuncs]{generate_random_effect_sigma}
 #' @return a numeric array, of dimension p * p * n, where each matrix is semi positive definite covariance matrix, a realization of the (possibly degenerate) Wishart distribution W_p(Sigma, df), where Sigma is possibly an RV itself.
+#' @family rWishart2
 #' @seealso \link[stats]{rWishart}
-#' @seealso \link[corrfuncs]{rWishart_ARMA}
-#' @seealso \link[corrfuncs]{generate_random_effect_sigma}
 #' @export
 #'
-rWishart2 <- function(n = 1, df, Sigma, random_effect = NULL)
+rWishart2 <- function(n, df, Sigma, random_effect = NULL)
 {
   p <- ncol(Sigma)
 
@@ -46,10 +46,10 @@ rWishart2 <- function(n = 1, df, Sigma, random_effect = NULL)
   if(df < p)
     warning('Wishart degrees of freedom lower than matrix dimension')
 
-  raw_function <- function(k)
-  {
-    Sigma <- generate_random_effect_sigma(Sigma, random_effect)
-    matrices <- mvtnorm::rmvnorm(n = df, sigma = Sigma)
+  raw_function <- function(k){
+    Sigma_ <- if(is.null(Sigma)) Sigma else generate_random_effect_sigma(Sigma, random_effect)
+    # todo: not efficient to do an if statement in an inner function
+    matrices <- mvtnorm::rmvnorm(n = df, sigma = Sigma_)
     return(t(matrices) %*% matrices)
   }
 
@@ -71,13 +71,12 @@ rWishart2 <- function(n = 1, df, Sigma, random_effect = NULL)
 #' @param AR a vector representing the Auto-regressive part of the multivariate ARMA process
 #' @param MA a vector representing the Moving-average part of the multivariate ARMA process
 #' @param ncores number of cores to use, if parallelized.
+#' @family rWishart2
 #' @return a numeric array, of dimension p * p * n, where each matrix is semi positive definite covariance matrix, a realization proportional to the (possibly degenerate) Wishart distribution W_p(Sigma, df), where Sigma is possibly an RV itself.
 #' @seealso \link[stats]{rWishart}
-#' @seealso \link[corrfuncs]{rWishart2}
-#' @seealso \link[corrfuncs]{generate_random_effect_sigma}
 #' @export
 #'
-rWishart_ARMA <- function(n = 1, df, Sigma, random_effect = NULL, AR = NULL, MA = NULL, ncores = 1)
+rWishart_ARMA <- function(n, df, Sigma, random_effect = NULL, AR = NULL, MA = NULL, ncores = 1)
 {
   p <- ncol(Sigma)
 
