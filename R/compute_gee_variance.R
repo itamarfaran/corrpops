@@ -53,6 +53,7 @@ compute_mu_alpha_jacobian <- function(group, alpha, control_datamatrix, diagnose
 #'
 #' @export
 #'
+# todo: compute_sandwich_variance
 compute_gee_variance <- function(mod, control_arr, diagnosed_arr, est_mu = TRUE)
   {
   inner <- function(group){

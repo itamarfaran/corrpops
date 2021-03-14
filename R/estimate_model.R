@@ -26,6 +26,8 @@
 #' @seealso \link[corrfuncs]{configurations}
 #' @export
 #'
+# todo: estimate_two_pop_model
+# todo: add wrapper with gee variance
 estimate_model <- function(
   control_arr, diagnosed_arr, dim_alpha = 1,
   LinkFunc = LinkFunctions$multiplicative_identity,

@@ -23,6 +23,7 @@ convert_data_matrix_to_corr_array_raw <- function(matr){
 #' @return a matrix with the vectorized matrices as rows
 #' @family vectriangle
 #' @export
+# todo: corr_array_to_matrix
 convert_corr_array_to_data_matrix <- function(arr, verbose = FALSE)
 {
   if(class(arr) == 'array'){
@@ -49,6 +50,7 @@ convert_corr_array_to_data_matrix <- function(arr, verbose = FALSE)
 #' @return an array with the rows as correlation matrices
 #' @family vectriangle
 #' @export
+# todo: inverse????
 convert_data_matrix_to_corr_array <- function(matr, verbose = FALSE)
 {
   if(class(matr) == 'array'){

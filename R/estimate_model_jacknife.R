@@ -30,6 +30,9 @@
 #' @seealso \link[corrfuncs]{estimate_model}
 #' @export
 #'
+# todo: estimate_two_pop_model_jk
+# todo: add wrapper with jk variance
+
 estimate_model_jacknife <- function(
   control_arr, diagnosed_arr, dim_alpha = 1, alpha0 = NULL, theta0 = NULL,
   LinkFunc = LinkFunctions$multiplicative_identity,
