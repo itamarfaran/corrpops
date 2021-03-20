@@ -1,4 +1,4 @@
-library(corrfuncs)
+library(corrpops)
 
 data('tga_arrays')
 

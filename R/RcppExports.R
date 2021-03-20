@@ -3,6 +3,6 @@
 
 #' @describeIn corrcalc_r c++ application of corrcalc_r
 corrcalc_c <- function(matr, m, order_vecti, order_vectj) {
-    .Call('_corrfuncs_corrcalc_c', PACKAGE = 'corrfuncs', matr, m, order_vecti, order_vectj)
+    .Call('_corrpops_corrcalc_c', PACKAGE = 'corrpops', matr, m, order_vecti, order_vectj)
 }
 

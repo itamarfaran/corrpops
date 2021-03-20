@@ -31,7 +31,7 @@ generate_random_effect_sigma <- function(Sigma, random_effect = NULL)
 #' @param n integer sample size.
 #' @param df numeric parameter, “degrees of freedom”. can be lower than the dimension of Sigma
 #' @param Sigma semi positive definite (p * p) “scale” matrix, the matrix parameter of the distribution.
-#' @param random_effect generate a random effect for each matrix with \link[corrfuncs]{generate_random_effect_sigma}
+#' @param random_effect generate a random effect for each matrix with \link[corrpops]{generate_random_effect_sigma}
 #' @return a numeric array, of dimension p * p * n, where each matrix is semi positive definite covariance matrix, a realization of the (possibly degenerate) Wishart distribution W_p(Sigma, df), where Sigma is possibly an RV itself.
 #' @family rWishart2
 #' @seealso \link[stats]{rWishart}
@@ -65,7 +65,7 @@ rWishart2 <- function(n, df, Sigma, random_effect = NULL)
 #' Generate n random matrices, distributed proportionally to the (possibly degenerate) Wishart distribution with parameters Sigma and df, W_p(Sigma, df),
 #' with df able to be lower than p, Sigma can be semi positive definite and a random effect.
 #' Also, unlike the underlying assumption of the Wishart distribution, the covariance matrices are simulated using correlated multivariate Gaussian RVs - not i.i.d.
-#' if AR & MA are null, will call \link[corrfuncs]{rWishart2}
+#' if AR & MA are null, will call \link[corrpops]{rWishart2}
 #'
 #' @inheritParams rWishart2
 #' @param AR a vector representing the Auto-regressive part of the multivariate ARMA process

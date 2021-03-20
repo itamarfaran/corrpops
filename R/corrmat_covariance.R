@@ -2,7 +2,7 @@
 #'
 #' Calculate the covariance matrix of a correlation matrix. The matrix can be in vectorized form.
 #'
-#' @param matr the correlation matrix. can be vectorized from \link[corrfuncs]{triangle2vector}
+#' @param matr the correlation matrix. can be vectorized from \link[corrpops]{triangle2vector}
 #' @param fisher_z if true, calculate the covariance matrix of a fisher-Z transformed correlation matrix. It is assumed that the correlations are already Fisher transformed, and the matrix will under go the Inverse Fisher Transformation.
 #' @param nonpositive error handling when matrix is not positive definite. can be one of 'stop', 'force', 'ignore'. if 'force' is chosen, \link[Matrix]{nearPD} will be used.
 #' @param use_cpp whether to use c++ source code. default true.
@@ -56,7 +56,7 @@ corrmat_covariance <- function(matr, fisher_z = FALSE, nonpositive = c('stop', '
 #' @param datamatrix the sample of correlation matrices. can be an array of matrices, or a matrix of vectorized correlation matrices.
 #' @param fisher_z if true, calculate the covariance matrix of a fisher-Z transformed correlation matrix. It is assumed that the correlations are already Fisher transformed, and the matrix will under go the Inverse Fisher Transformation.
 #' @param est_n whether to divide the covariance matrix by the estimated degrees of freedom, with a linear projection.
-#' @param only_diag passed to \link[corrfuncs]{compute_estimated_n}
+#' @param only_diag passed to \link[corrpops]{compute_estimated_n}
 #' @param nonpositive error handling when matrix is not positive definite. can be one of 'stop', 'force', 'ignore'. if 'force' is chosen, \link[Matrix]{nearPD} will be used.
 #' @param use_cpp whether to use c++ source code. default true.
 #' @param ncores number of cores to use, if parallelization is in use.

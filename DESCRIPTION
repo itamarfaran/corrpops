@@ -1,5 +1,5 @@
-Package: corrfuncs
-Title: Analysis of two populations of correlation matrices
+Package: corrpops
+Title: Analysis of populations of correlation matrices
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Itamar",

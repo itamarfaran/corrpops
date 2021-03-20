@@ -1,4 +1,4 @@
 library(testthat)
-library(corrfuncs)
+library(corrpops)
 
-# test_check('corrfuncs')
+# test_check('corrpops')

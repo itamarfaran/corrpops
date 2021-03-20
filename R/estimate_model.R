@@ -5,11 +5,11 @@
 #' @param control_arr array of control group correlation matrices. either an array or data matrix form
 #' @param diagnosed_arr array of diagnosed group correlation matrices. either an array or data matrix form
 #' @param dim_alpha the number of columns in alpha. default 1
-#' @param LinkFunc a list of function. must include func, inverse, rev_func and null_value. see \link[corrfuncs]{LinkFuncSkeleton}
-#' @param model_reg_config see \link[corrfuncs]{configurations}. arguments passed will override the defaults.
-#' @param matrix_reg_config see \link[corrfuncs]{configurations}. arguments passed will override the defaults.
-#' @param iid_config list of two lists named 'iter_config' and 'optim_config', for the optimization of the model with identity matrix covariance matrix. see \link[corrfuncs]{configurations}. arguments passed will override the defaults.
-#' @param cov_config list of two lists named 'iter_config' and 'optim_config', for the optimization of the model with a specified covariance matrix. see \link[corrfuncs]{configurations}. arguments passed will override the defaults.
+#' @param LinkFunc a list of function. must include func, inverse, rev_func and null_value. see \link[corrpops]{LinkFuncSkeleton}
+#' @param model_reg_config see \link[corrpops]{configurations}. arguments passed will override the defaults.
+#' @param matrix_reg_config see \link[corrpops]{configurations}. arguments passed will override the defaults.
+#' @param iid_config list of two lists named 'iter_config' and 'optim_config', for the optimization of the model with identity matrix covariance matrix. see \link[corrpops]{configurations}. arguments passed will override the defaults.
+#' @param cov_config list of two lists named 'iter_config' and 'optim_config', for the optimization of the model with a specified covariance matrix. see \link[corrpops]{configurations}. arguments passed will override the defaults.
 #' @param raw_start if true, don't optimize with the identity matrix before optimizing with a specified covariance matrix
 #' @param bias_correction if true, correct the estimates to the median: a' = a - med(a) + null_value
 #' @param early_stop if true, stop the optimization of the joint loss function (of theta and alpha) didn't decrease in the last iteration.
@@ -23,7 +23,7 @@
 #' @return - convergence: a vector with the convergence in each iteration. see \link[stats]{optim}
 #' @return - steps: the estimates of theta, alpha in each iteration
 #' @return - log_optim: if optim_config$log_optim=TRUE, will return the output of \link[stats]{optim} for each iteration. else, NA.
-#' @seealso \link[corrfuncs]{configurations}
+#' @seealso \link[corrpops]{configurations}
 #' @export
 #'
 # todo: estimate_two_pop_model

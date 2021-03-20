@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // corrcalc_c
 NumericMatrix corrcalc_c(NumericMatrix matr, int m, NumericVector order_vecti, NumericVector order_vectj);
-RcppExport SEXP _corrfuncs_corrcalc_c(SEXP matrSEXP, SEXP mSEXP, SEXP order_vectiSEXP, SEXP order_vectjSEXP) {
+RcppExport SEXP _corrpops_corrcalc_c(SEXP matrSEXP, SEXP mSEXP, SEXP order_vectiSEXP, SEXP order_vectjSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -21,11 +21,11 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_corrfuncs_corrcalc_c", (DL_FUNC) &_corrfuncs_corrcalc_c, 4},
+    {"_corrpops_corrcalc_c", (DL_FUNC) &_corrpops_corrcalc_c, 4},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_corrfuncs(DllInfo *dll) {
+RcppExport void R_init_corrpops(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

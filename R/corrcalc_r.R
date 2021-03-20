@@ -1,14 +1,14 @@
 #' Formula for the Calculation of the Covariance Matrix of a Correlation Matrix
 #'
 #' actual calculation of the covariance parameters, Cov(R_ij, R_kl)
-#' an internal function, shouldn't be used directly. use \link[corrfuncs]{corrmat_covariance}
+#' an internal function, shouldn't be used directly. use \link[corrpops]{corrmat_covariance}
 #' @param matr the correlation matrix to calculate the covariance of
 #' @param m the number of coefficients in the matrix - 0.5 p (p-1)
 #' @param order_vecti mapping vector from i' -> i,j
 #' @param order_vectj mapping vector from j' -> k,l
 #' @return the covariance matrix of the vectorized correlation matrix
 #' @family corrcalc
-#' @seealso \link[corrfuncs]{triangle2vector}
+#' @seealso \link[corrpops]{triangle2vector}
 corrcalc_r <- function(matr, m, order_vecti, order_vectj)
 {
   output <- matrix(0, nrow = m, ncol = m)

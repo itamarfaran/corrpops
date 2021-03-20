@@ -7,11 +7,11 @@
 #' @param dim_alpha the number of columns in alpha. default 1
 #' @param alpha0 starting point for alpha in the optimization. if null (the default), will use LinkFunc$null_value
 #' @param theta0 starting point for alpha in the optimization. if null (the default), will the average matrix of all subjects
-#' @param LinkFunc a list of function. must include func, inverse, rev_func and null_value. see \link[corrfuncs]{LinkFuncSkeleton}
-#' @param model_reg_config see \link[corrfuncs]{configurations}. arguments passed will override the defaults.
-#' @param matrix_reg_config see \link[corrfuncs]{configurations}. arguments passed will override the defaults.
-#' @param iid_config list of two lists named 'iter_config' and 'optim_config', for the optimization of the model with identity matrix covariance matrix. see \link[corrfuncs]{configurations}. arguments passed will override the defaults.
-#' @param cov_config list of two lists named 'iter_config' and 'optim_config', for the optimization of the model with a specified covariance matrix. see \link[corrfuncs]{configurations}. arguments passed will override the defaults.
+#' @param LinkFunc a list of function. must include func, inverse, rev_func and null_value. see \link[corrpops]{LinkFuncSkeleton}
+#' @param model_reg_config see \link[corrpops]{configurations}. arguments passed will override the defaults.
+#' @param matrix_reg_config see \link[corrpops]{configurations}. arguments passed will override the defaults.
+#' @param iid_config list of two lists named 'iter_config' and 'optim_config', for the optimization of the model with identity matrix covariance matrix. see \link[corrpops]{configurations}. arguments passed will override the defaults.
+#' @param cov_config list of two lists named 'iter_config' and 'optim_config', for the optimization of the model with a specified covariance matrix. see \link[corrpops]{configurations}. arguments passed will override the defaults.
 #' @param return_gee if true, calculate the gee estimate of variance in each jackknife
 #' @param jack_control if false, don't jackknife control subjects
 #' @param bias_correction if true, correct the estimates to the median: a' = a - med(a) + null_value
@@ -27,7 +27,7 @@
 #' @return - is_diagnosed: a vector with 0,1 indicating of a control or diagnosed subjet was omitted in the iteration
 #' @return - LinkFunc: the link function used same as the parameter LinkFunc
 #' @return - regularization: the same as model_reg_config parameter
-#' @seealso \link[corrfuncs]{estimate_model}
+#' @seealso \link[corrpops]{estimate_model}
 #' @export
 #'
 # todo: estimate_two_pop_model_jk

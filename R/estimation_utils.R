@@ -3,7 +3,7 @@
 #' @param alpha estimate of alpha
 #' @param control_datamatrix data matrix of control subjects
 #' @param diagnosed_datamatrix data matrix of diagnosed subjects
-#' @param LinkFunc \link[corrfuncs]{LinkFuncSkeleton}
+#' @param LinkFunc \link[corrpops]{LinkFuncSkeleton}
 #' @param d dimension of alpha
 #' @return estimate of theta based on control and doagnosed subjects
 theta_of_alpha <- function(alpha, control_datamatrix, diagnosed_datamatrix, LinkFunc, d = 1){
@@ -20,11 +20,11 @@ theta_of_alpha <- function(alpha, control_datamatrix, diagnosed_datamatrix, Link
 #' @param theta estimate of theta
 #' @param diagnosed_datamatrix data matrix of diagnosed subjects
 #' @param inv_sigma covariance matrix of correlation data matrix, inverted
-#' @param LinkFunc \link[corrfuncs]{LinkFuncSkeleton}
+#' @param LinkFunc \link[corrpops]{LinkFuncSkeleton}
 #' @param sigma if inv_sigma is missing, invert this matrix and use it as inv_sigma
 #' @param dim_alpha dimension of alpha
-#' @param reg_lambda see model_reg in \link[corrfuncs]{configurations}
-#' @param reg_p see model_reg in \link[corrfuncs]{configurations}
+#' @param reg_lambda see model_reg in \link[corrpops]{configurations}
+#' @param reg_p see model_reg in \link[corrpops]{configurations}
 #' @return value of sum of squares
 sum_of_squares <- function(
   alpha, theta, diagnosed_datamatrix, inv_sigma, LinkFunc,
@@ -58,15 +58,15 @@ get_update_message <- function(i, start_time, convergence, distance){
 #' @param theta0 starting point for theta
 #' @param weight_matrix the weighting matrix to be used in the mahalonobis sum of squares
 #' @param dim_alpha dimension of alpha
-#' @param LinkFunc \link[corrfuncs]{LinkFuncSkeleton}
-#' @param model_reg_config see \link[corrfuncs]{configurations}
-#' @param matrix_reg_config see \link[corrfuncs]{configurations}
-#' @param iter_config see \link[corrfuncs]{configurations}
-#' @param optim_config see \link[corrfuncs]{configurations}
+#' @param LinkFunc \link[corrpops]{LinkFuncSkeleton}
+#' @param model_reg_config see \link[corrpops]{configurations}
+#' @param matrix_reg_config see \link[corrpops]{configurations}
+#' @param iter_config see \link[corrpops]{configurations}
+#' @param optim_config see \link[corrpops]{configurations}
 #' @param early_stop if true, stop the optimization of the joint loss function (of theta and alpha) didn't decrease in the last iteration.
 #' @param verbose if true, print status to console
-#' @return see \link[corrfuncs]{estimate_model}
-#' @seealso \link[corrfuncs]{estimate_model}
+#' @return see \link[corrpops]{estimate_model}
+#' @seealso \link[corrpops]{estimate_model}
 optimiser <- function(
   control_datamatrix, diagnosed_datamatrix, alpha0, theta0, weight_matrix, dim_alpha, LinkFunc,
   model_reg_config, matrix_reg_config, iter_config, optim_config, early_stop, verbose)

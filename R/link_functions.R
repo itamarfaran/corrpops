@@ -1,6 +1,6 @@
 #' Skeleton of Link Function
 #'
-#' Skeleton of link function consumed by \link[corrfuncs]{estimate_model}.
+#' Skeleton of link function consumed by \link[corrpops]{estimate_model}.
 #' has the following elements:
 #' - name: optional, a string specifing the link function's name
 #' - func: mandatory, a function with input t (theta), a vectorized correlation matrix, a (alpha) and d, the number of columns in alpha. the output would be a correlation matrix with alpha effect
@@ -61,7 +61,7 @@ additive_quotent <- list(
 
 
 #' Default Link Functions for model
-#' @seealso \link[corrfuncs]{LinkFuncSkeleton}
+#' @seealso \link[corrpops]{LinkFuncSkeleton}
 #' @export
 LinkFunctions <- list(
   multiplicative_identity = multiplicative_identity,
