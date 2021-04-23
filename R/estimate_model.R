@@ -6,6 +6,7 @@
 #' @param diagnosed_arr array of diagnosed group correlation matrices. either an array or data matrix form
 #' @param dim_alpha the number of columns in alpha. default 1
 #' @param LinkFunc a list of function. must include func, inverse, rev_func and null_value. see \link[corrpops]{LinkFuncSkeleton}
+#' @param infer whether to claculate the gee framework covariance matrx. default TRUE
 #' @param model_reg_config see \link[corrpops]{configurations}. arguments passed will override the defaults.
 #' @param matrix_reg_config see \link[corrpops]{configurations}. arguments passed will override the defaults.
 #' @param iid_config list of two lists named 'iter_config' and 'optim_config', for the optimization of the model with identity matrix covariance matrix. see \link[corrpops]{configurations}. arguments passed will override the defaults.
@@ -23,14 +24,14 @@
 #' @return - convergence: a vector with the convergence in each iteration. see \link[stats]{optim}
 #' @return - steps: the estimates of theta, alpha in each iteration
 #' @return - log_optim: if optim_config$log_optim=TRUE, will return the output of \link[stats]{optim} for each iteration. else, NA.
+#' @return - vcov: the covariance matrix of the estimates
 #' @seealso \link[corrpops]{configurations}
 #' @export
 #'
 # todo: estimate_two_pop_model
-# todo: add wrapper with gee variance
 estimate_model <- function(
   control_arr, diagnosed_arr, dim_alpha = 1,
-  LinkFunc = LinkFunctions$multiplicative_identity,
+  LinkFunc = LinkFunctions$multiplicative_identity, infer = TRUE,  # todo: rename link_func
   model_reg_config = list(), matrix_reg_config = list(),
   iid_config = list(), cov_config = list(),
   raw_start = FALSE, bias_correction = FALSE, early_stop = FALSE,
@@ -61,7 +62,7 @@ estimate_model <- function(
 
   weight_matrix <- corrmat_covariance_from_datamatrix(diagnosed_datamatrix)
 
-  cov_model <- optimiser(
+  output <- optimiser(
     control_datamatrix = control_datamatrix, diagnosed_datamatrix = diagnosed_datamatrix,
     alpha0 = alpha0, theta0 = theta0,
     weight_matrix = weight_matrix, dim_alpha = dim_alpha, LinkFunc = LinkFunc,
@@ -71,7 +72,9 @@ estimate_model <- function(
   )
 
   if(bias_correction)
-    cov_model$alpha <- cov_model$alpha - stats::median(cov_model$alpha) + LinkFunc$null_value
+    output$alpha <- output$alpha - stats::median(output$alpha) + LinkFunc$null_value
 
-  return(cov_model)
+  output$vcov <- if(infer) compute_gee_variance(output, control_arr, diagnosed_arr) else NULL
+
+  return(output)
 }

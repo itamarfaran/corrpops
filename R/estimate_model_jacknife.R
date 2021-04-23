@@ -8,6 +8,7 @@
 #' @param alpha0 starting point for alpha in the optimization. if null (the default), will use LinkFunc$null_value
 #' @param theta0 starting point for alpha in the optimization. if null (the default), will the average matrix of all subjects
 #' @param LinkFunc a list of function. must include func, inverse, rev_func and null_value. see \link[corrpops]{LinkFuncSkeleton}
+#' @param infer whether to claculate the jackknife framework covariance matrix. default TRUE
 #' @param model_reg_config see \link[corrpops]{configurations}. arguments passed will override the defaults.
 #' @param matrix_reg_config see \link[corrpops]{configurations}. arguments passed will override the defaults.
 #' @param iid_config list of two lists named 'iter_config' and 'optim_config', for the optimization of the model with identity matrix covariance matrix. see \link[corrpops]{configurations}. arguments passed will override the defaults.
@@ -27,6 +28,7 @@
 #' @return - is_diagnosed: a vector with 0,1 indicating of a control or diagnosed subjet was omitted in the iteration
 #' @return - LinkFunc: the link function used same as the parameter LinkFunc
 #' @return - regularization: the same as model_reg_config parameter
+#' @return - vcov: the covariance matrix of the estimates
 #' @seealso \link[corrpops]{estimate_model}
 #' @export
 #'
@@ -35,7 +37,7 @@
 
 estimate_model_jacknife <- function(
   control_arr, diagnosed_arr, dim_alpha = 1, alpha0 = NULL, theta0 = NULL,
-  LinkFunc = LinkFunctions$multiplicative_identity,
+  LinkFunc = LinkFunctions$multiplicative_identity, infer=TRUE,
   model_reg_config = list(), matrix_reg_config = list(),
   iid_config = list(iter_config = list(minit = 0)), cov_config = list(),
   return_gee = FALSE, jack_control = TRUE,
@@ -112,6 +114,7 @@ estimate_model_jacknife <- function(
       diagnosed_arr = diagnosed_datamatrix,
       dim_alpha = dim_alpha,
       LinkFunc = LinkFunc,
+      infer = FALSE,
       model_reg_config = model_reg_config,
       matrix_reg_config = matrix_reg_config,
       raw_start = TRUE,
@@ -182,6 +185,8 @@ estimate_model_jacknife <- function(
     LinkFunc = LinkFunc,
     regularization = model_reg_config
   )
+
+  output$vcov <- if(infer) infer_jackknife(output) else NULL
 
   return(output)
 }
