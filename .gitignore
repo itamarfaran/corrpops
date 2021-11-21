@@ -43,7 +43,6 @@ vignettes/*.pdf
 # directories
 .idea
 man
-data
 # todo: drop data, man when finish documenting
 
 # rcpp build files
