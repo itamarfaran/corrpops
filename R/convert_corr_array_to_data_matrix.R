@@ -26,10 +26,10 @@ convert_data_matrix_to_corr_array_raw <- function(matr){
 # todo: corr_array_to_matrix
 convert_corr_array_to_data_matrix <- function(arr, verbose = FALSE)
 {
-  if(class(arr) == 'array'){
+  if(identical('array',class(arr))){
     msg <- 'array transformed from array to matrix'
     out <- convert_corr_array_to_data_matrix_raw(arr)
-  } else if (class(arr) %in% c('matrix', 'data.frame')){
+  } else if (any (c('matrix', 'data.frame') %in% class(arr))) {
     msg <- 'object already in normal data matrix form'
     out <- arr
   } else {
@@ -53,10 +53,10 @@ convert_corr_array_to_data_matrix <- function(arr, verbose = FALSE)
 # todo: inverse????
 convert_data_matrix_to_corr_array <- function(matr, verbose = FALSE)
 {
-  if(class(matr) == 'array'){
+  if(identical('array',class(matr))){
     msg <- 'object already an array'
     out <- matr
-  } else if (class(matr) %in% c('matrix', 'data.frame')){
+  } else if (any (c('matrix', 'data.frame') %in% class(matr)) ){
     msg <- 'matrix transformed from to array'
     out <- convert_data_matrix_to_corr_array_raw(matr)
   } else {
