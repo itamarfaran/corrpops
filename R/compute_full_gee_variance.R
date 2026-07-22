@@ -610,7 +610,7 @@ compute_dense_block_variance <- function(
 #'
 #' @export
 #'
-compute_schur_block_variance <- function(
+compute_schur_variance <- function(
     mod,
     control_arr,
     diagnosed_arr,
@@ -700,7 +700,7 @@ compute_schur_block_variance <- function(
 
 #' @rdname compute_schur_block_variance
 #' @export
-compute_structured_schur_variance <- compute_schur_block_variance
+compute_structured_schur_variance <- compute_schur_variance
 
 #' @rdname compute_dense_block_variance
 #' @export

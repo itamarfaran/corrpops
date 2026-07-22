@@ -55,7 +55,13 @@ compute_mu_alpha_jacobian <- function(group, alpha, control_datamatrix, diagnose
 # todo: compute_sandwich_variance
 compute_gee_variance <- function(mod, control_arr, diagnosed_arr, est_mu = TRUE)
   {
-  warning("compute_gee_variance_prev is deprecated. Use compute_gee_variance instead.", call. = FALSE)
+  warning("The function is depricated. Use compute_schur_variance instead.")
+  return(0)
+  }  
+
+compute_gee_variance_prev <- function(mod, control_arr, diagnosed_arr, est_mu = TRUE)
+  {
+  warning("Deprecated function. Use compute_schur_variance instead.", call. = FALSE)
   inner <- function(group){
     control_datamatrix <- convert_corr_array_to_data_matrix(control_arr)
     diagnosed_datamatrix <- convert_corr_array_to_data_matrix(diagnosed_arr)

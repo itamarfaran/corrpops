@@ -1,6 +1,6 @@
 Package: corrpops
 Title: Analysis of populations of correlation matrices
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R: 
     person(given = "Itamar",
            family = "Faran",
@@ -11,7 +11,6 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
 Imports:
   purrr,
   mvtnorm,
@@ -26,5 +25,6 @@ Suggests:
     testthat (>= 2.0.0)
 LinkingTo: Rcpp
 Depends: 
-    R (>= 2.10)
+    R (>= 4.1)
 Config/testthat/edition: 2
+Config/roxygen2/version: 8.0.0
