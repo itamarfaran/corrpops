@@ -12,8 +12,7 @@
 #' @param LinkFunc the link function $g$ to use
 #' @return the Jacobian matrix
 #'
-compute_mu_alpha_jacobian <- function(group, alpha, control_datamatrix, diagnosed_datamatrix, d = 1, LinkFunc)
-{
+compute_mu_alpha_jacobian <- function(group, alpha, control_datamatrix, diagnosed_datamatrix, d = 1, LinkFunc) {
    if(group == 'diagnosed'){
      func <- function(A){
        theta <- theta_of_alpha(A, control_datamatrix, diagnosed_datamatrix, LinkFunc = LinkFunc, d = d)
@@ -56,6 +55,13 @@ compute_mu_alpha_jacobian <- function(group, alpha, control_datamatrix, diagnose
 # todo: compute_sandwich_variance
 compute_gee_variance <- function(mod, control_arr, diagnosed_arr, est_mu = TRUE)
   {
+  warning("The function is depricated. Use compute_schur_variance instead.")
+  return(0)
+  }  
+
+compute_gee_variance_prev <- function(mod, control_arr, diagnosed_arr, est_mu = TRUE)
+  {
+  warning("Deprecated function. Use compute_schur_variance instead.", call. = FALSE)
   inner <- function(group){
     control_datamatrix <- convert_corr_array_to_data_matrix(control_arr)
     diagnosed_datamatrix <- convert_corr_array_to_data_matrix(diagnosed_arr)
@@ -115,8 +121,8 @@ compute_gee_variance <- function(mod, control_arr, diagnosed_arr, est_mu = TRUE)
     return(out)
   }
 
-  reg_lambda <- mod$regularization$lambda
-  reg_p <- mod$regularization$lp
+#  reg_lambda <- mod$regularization$lambda
+#  reg_p <- mod$regularization$lp
 
   control_lst <- inner('control')
   diagnosed_lst <- inner('diagnosed')
