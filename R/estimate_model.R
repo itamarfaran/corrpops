@@ -74,7 +74,7 @@ estimate_model <- function(
   if(bias_correction)
     output$alpha <- output$alpha - stats::median(output$alpha) + LinkFunc$null_value
 
-  output$vcov <- if(infer) compute_gee_variance(output, control_arr, diagnosed_arr) else NULL
+  output$vcov <- if(infer) compute_schur_variance(output, control_arr, diagnosed_arr) else NULL
 
   return(output)
 }

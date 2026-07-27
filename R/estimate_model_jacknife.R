@@ -82,7 +82,7 @@ estimate_model_jacknife <- function(
 
     gee_out <- NA
     if(return_gee){
-      gee_out <- triangle2vector(compute_gee_variance(
+      gee_out <- triangle2vector(compute_schur_variance(
         mod = cov_model,
         control_arr = control_datamatrix_,
         diagnosed_arr = diagnosed_datamatrix_,

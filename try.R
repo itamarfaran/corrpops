@@ -17,4 +17,4 @@ results <- estimate_model(
   bias_correction = TRUE)
 
 
-compute_gee_variance(results, control_subset, diagnosed_subset)
+compute_schur_variance(results, control_subset, diagnosed_subset)
