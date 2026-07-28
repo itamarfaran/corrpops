@@ -223,7 +223,7 @@ optimiser <- function(
     alpha = temp_alpha,
     LinkFunc = LinkFunc,
     regularization = model_reg_config,
-    vcov = weight_matrix_reg_inv,
+    weight_inv = weight_matrix_reg_inv,
     convergence = convergence,
     steps = steps,
     log_optim = log_optim_out

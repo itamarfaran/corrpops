@@ -111,7 +111,7 @@
     est_n = est_n,
     nonpositive = nonpositive
   )
-  W_diagnosed <- solve(covariance_diagnosed)
+  W_diagnosed <- mod$weight_inv
 
   if (!is.null(mod$regularization$lambda) &&
       is.finite(mod$regularization$lambda) &&
